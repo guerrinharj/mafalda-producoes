@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation'
 
+import Navbar from '@/components/Navbar'
 import {
     isLocale,
-    type Locale,
+    locales,
 } from '@/lib/dictionaries'
 
 type LocaleLayoutProps = {
@@ -13,10 +14,9 @@ type LocaleLayoutProps = {
 }
 
 export function generateStaticParams() {
-    return [
-        { locale: 'pt' },
-        { locale: 'en' },
-    ]
+    return locales.map((locale) => ({
+        locale,
+    }))
 }
 
 export default async function LocaleLayout({
@@ -30,8 +30,10 @@ export default async function LocaleLayout({
     }
 
     return (
-        <div data-locale={locale as Locale}>
+        <>
+            <Navbar locale={locale} />
+
             {children}
-        </div>
+        </>
     )
 }

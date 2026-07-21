@@ -15,9 +15,30 @@ export const dictionary = {
         save: 'Save',
         cancel: 'Cancel',
         loading: 'Loading...',
+        featured: 'Featured',
+        projects: 'Projects',
+        noProjects: 'No projects found.',
     },
 
     home: {
         title: 'Mafalda Artistic Productions',
+    },
+
+    pages: {
+        events: {
+            title: 'Events',
+        },
+        audiovisual: {
+            title: 'Audiovisual',
+        },
+        artAndJewelry: {
+            title: 'Art & Jewelry',
+        },
+        budget: {
+            title: 'Request a Quote',
+        },
+        about: {
+            title: 'About',
+        },
     },
 } as const
