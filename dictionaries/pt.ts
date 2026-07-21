@@ -4,7 +4,7 @@ export const dictionary = {
     nav: {
         events: 'Eventos',
         audiovisual: 'Audiovisual',
-        artAndJewelry: 'Arte & Joalheria',
+        artAndJewelry: 'Arte',
         budget: 'Orçamento',
         about: 'Sobre',
     },
@@ -32,7 +32,7 @@ export const dictionary = {
             title: 'Audiovisual',
         },
         artAndJewelry: {
-            title: 'Arte & Joalheria',
+            title: 'Arte',
         },
         budget: {
             title: 'Orçamento',
