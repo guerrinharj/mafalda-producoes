@@ -1,15 +1,25 @@
-'use client'
-
 import Link from 'next/link'
 
-export default function AddProjectButton() {
+import type { Locale } from '@/lib/dictionaries'
+
+type AddProjectButtonProps = {
+    locale: Locale
+}
+
+export default function AddProjectButton({
+    locale,
+}: AddProjectButtonProps) {
     return (
         <Link
-            href="/projetos/novo"
-            aria-label="Adicionar projeto"
+            href={`/${locale}/projetos/novo`}
+            aria-label={
+                locale === 'pt'
+                    ? 'Adicionar projeto'
+                    : 'Add project'
+            }
             className="
                 fixed
-                right-6
+                right-8
                 top-1/2
                 z-50
                 -translate-y-1/2
