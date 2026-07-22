@@ -15,6 +15,7 @@ const linkClass = `
     z-50
     inline-block
     pb-1
+    uppercase
 
     after:absolute
     after:left-0
@@ -23,7 +24,7 @@ const linkClass = `
     after:w-full
     after:origin-left
     after:scale-x-0
-    after:bg-black
+    after:bg-[#F4EEDB]
     after:transition-transform
     after:duration-300
     after:ease-out
