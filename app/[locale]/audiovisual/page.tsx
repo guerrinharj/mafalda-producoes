@@ -28,10 +28,6 @@ export default async function AudiovisualPage({
 
     return (
         <PageContainer>
-            <PageHeader
-                title={dict.pages.audiovisual.title}
-            />
-
             <ProjectCategoryPage
                 locale={locale}
                 category="audiovisual"

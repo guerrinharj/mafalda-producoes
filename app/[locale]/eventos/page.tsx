@@ -28,10 +28,6 @@ export default async function EventosPage({
 
     return (
         <PageContainer>
-            <PageHeader
-                title={dict.pages.events.title}
-            />
-
             <ProjectCategoryPage
                 locale={locale}
                 category="events"

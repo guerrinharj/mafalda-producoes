@@ -28,10 +28,6 @@ export default async function ArteEJoalheriaPage({
 
     return (
         <PageContainer>
-            <PageHeader
-                title={dict.pages.artAndJewelry.title}
-            />
-
             <ProjectCategoryPage
                 locale={locale}
                 category="art_jewelry"
