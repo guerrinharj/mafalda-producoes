@@ -36,40 +36,52 @@ export default function Navbar({
     const dict = getDictionary(locale)
 
     return (
-        <header className="relative">
-            <nav className="grid grid-cols-4 items-center px-8 py-6">
-                <Link
-                    href={`/${locale}/eventos`}
-                    className={`${linkClass} justify-self-start`}
-                >
-                    {dict.nav.events}
-                </Link>
+        <>
+            <header
+                className="
+                    fixed
+                    top-0
+                    left-0
+                    z-50
+                    w-full
+                    bg-white/90
+                    backdrop-blur-sm
+                "
+            >
+                <nav className="grid grid-cols-4 items-center px-8 py-6">
+                    <Link
+                        href={`/${locale}/eventos`}
+                        className={`${linkClass} justify-self-start`}
+                    >
+                        {dict.nav.events}
+                    </Link>
 
-                <Link
-                    href={`/${locale}/audiovisual`}
-                    className={`${linkClass} justify-self-center`}
-                >
-                    {dict.nav.audiovisual}
-                </Link>
+                    <Link
+                        href={`/${locale}/audiovisual`}
+                        className={`${linkClass} justify-self-start`}
+                    >
+                        {dict.nav.audiovisual}
+                    </Link>
 
-                <Link
-                    href={`/${locale}/arte-e-joalheria`}
-                    className={`${linkClass} justify-self-center`}
-                >
-                    {dict.nav.artAndJewelry}
-                </Link>
+                    <Link
+                        href={`/${locale}/arte-e-joalheria`}
+                        className={`${linkClass} justify-self-end`}
+                    >
+                        {dict.nav.artAndJewelry}
+                    </Link>
 
-                <Link
-                    href={`/${locale}/sobre`}
-                    className={`${linkClass} justify-self-end`}
-                >
-                    {dict.nav.about}
-                </Link>
-            </nav>
+                    <Link
+                        href={`/${locale}/sobre`}
+                        className={`${linkClass} justify-self-end`}
+                    >
+                        {dict.nav.about}
+                    </Link>
+                </nav>
+            </header>
 
             <div className="fixed bottom-8 right-8 z-50">
                 <LocaleSwitcher locale={locale} />
             </div>
-        </header>
+        </>
     )
 }
