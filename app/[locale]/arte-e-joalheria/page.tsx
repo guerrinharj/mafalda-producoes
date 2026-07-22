@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import PageContainer from '@/components/PageContainer'
-import PageHeader from '@/components/PageHeader'
+import PageTransition from '@/components/PageTransition'
 import ProjectCategoryPage from '@/components/ProjectCategoryPage'
 
 import {
@@ -24,14 +24,16 @@ export default async function ArteEJoalheriaPage({
         notFound()
     }
 
-    const dict = getDictionary(locale)
+    getDictionary(locale)
 
     return (
         <PageContainer>
-            <ProjectCategoryPage
-                locale={locale}
-                category="art_jewelry"
-            />
+            <PageTransition>
+                <ProjectCategoryPage
+                    locale={locale}
+                    category="art_jewelry"
+                />
+            </PageTransition>
         </PageContainer>
     )
 }

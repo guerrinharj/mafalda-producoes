@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import PageContainer from '@/components/PageContainer'
-import PageHeader from '@/components/PageHeader'
+import PageTransition from '@/components/PageTransition'
 import ProjectCategoryPage from '@/components/ProjectCategoryPage'
 
 import {
@@ -15,7 +15,7 @@ type Props = {
     }>
 }
 
-export default async function AudiovisualPage({
+export default async function ArteEJoalheriaPage({
     params,
 }: Props) {
     const { locale } = await params
@@ -24,14 +24,16 @@ export default async function AudiovisualPage({
         notFound()
     }
 
-    const dict = getDictionary(locale)
+    getDictionary(locale)
 
     return (
         <PageContainer>
-            <ProjectCategoryPage
-                locale={locale}
-                category="audiovisual"
-            />
+            <PageTransition>
+                <ProjectCategoryPage
+                    locale={locale}
+                    category="audiovisual"
+                />
+            </PageTransition>
         </PageContainer>
     )
 }
