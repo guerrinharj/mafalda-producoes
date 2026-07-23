@@ -3,17 +3,19 @@
 import {
     ChangeEvent,
     FormEvent,
+    useMemo,
     useState,
 } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/client'
-import { Locale } from '@/lib/dictionaries'
+import type { Locale } from '@/lib/dictionaries'
 
 type Props = {
     locale: Locale
 }
 
+const STORAGE_BUCKET = 'project-media'
 
 const PROJECT_CATEGORIES = [
     'art_jewelry',
@@ -33,7 +35,11 @@ type FormState = {
     description_pt: string
     description_en: string
     is_featured: boolean
-    media: string
+}
+
+type UploadedMedia = {
+    path: string
+    publicUrl: string
 }
 
 const initialState: FormState = {
@@ -45,7 +51,6 @@ const initialState: FormState = {
     description_pt: '',
     description_en: '',
     is_featured: false,
-    media: '',
 }
 
 function createSlug(value: string) {
@@ -58,24 +63,63 @@ function createSlug(value: string) {
         .replace(/^-+|-+$/g, '')
 }
 
-function parseMedia(media: string) {
-    return media
-        .split('\n')
-        .map((item) => item.trim())
-        .filter(Boolean)
+function sanitizeFileName(fileName: string) {
+    const lastDotIndex = fileName.lastIndexOf('.')
+
+    const extension =
+        lastDotIndex >= 0
+            ? fileName.slice(lastDotIndex).toLowerCase()
+            : ''
+
+    const nameWithoutExtension =
+        lastDotIndex >= 0
+            ? fileName.slice(0, lastDotIndex)
+            : fileName
+
+    const sanitizedName = nameWithoutExtension
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+
+    return `${sanitizedName || 'media'}${extension}`
+}
+
+function formatFileSize(size: number) {
+    if (size < 1024) {
+        return `${size} B`
+    }
+
+    if (size < 1024 * 1024) {
+        return `${(size / 1024).toFixed(1)} KB`
+    }
+
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export default function NewProjectForm({
     locale,
 }: Props) {
     const router = useRouter()
-    const supabase = createClient()
+
+    const supabase = useMemo(
+        () => createClient(),
+        []
+    )
 
     const [form, setForm] =
         useState<FormState>(initialState)
 
+    const [mediaFiles, setMediaFiles] =
+        useState<File[]>([])
+
     const [isLoading, setIsLoading] =
         useState(false)
+
+    const [uploadProgress, setUploadProgress] =
+        useState<string | null>(null)
 
     const [error, setError] =
         useState<string | null>(null)
@@ -119,67 +163,197 @@ export default function NewProjectForm({
         }))
     }
 
+    function handleMediaChange(
+        event: ChangeEvent<HTMLInputElement>
+    ) {
+        const selectedFiles = Array.from(
+            event.target.files ?? []
+        )
+
+        const invalidFiles = selectedFiles.filter(
+            (file) =>
+                !file.type.startsWith('image/') &&
+                !file.type.startsWith('video/')
+        )
+
+        if (invalidFiles.length > 0) {
+            setError(
+                locale === 'pt'
+                    ? 'Selecione somente imagens e vídeos.'
+                    : 'Select images and videos only.'
+            )
+
+            event.target.value = ''
+            return
+        }
+
+        setError(null)
+        setMediaFiles(selectedFiles)
+    }
+
+    function removeMediaFile(indexToRemove: number) {
+        setMediaFiles((currentFiles) =>
+            currentFiles.filter(
+                (_, index) => index !== indexToRemove
+            )
+        )
+    }
+
+    async function uploadMediaFiles(
+        slug: string
+    ): Promise<UploadedMedia[]> {
+        const uploadedMedia: UploadedMedia[] = []
+
+        for (
+            let index = 0;
+            index < mediaFiles.length;
+            index += 1
+        ) {
+            const file = mediaFiles[index]
+
+            setUploadProgress(
+                locale === 'pt'
+                    ? `Enviando ${index + 1} de ${mediaFiles.length}: ${file.name}`
+                    : `Uploading ${index + 1} of ${mediaFiles.length}: ${file.name}`
+            )
+
+            const safeFileName =
+                sanitizeFileName(file.name)
+
+            const storagePath = [
+                slug,
+                `${crypto.randomUUID()}-${safeFileName}`,
+            ].join('/')
+
+            const {
+                error: uploadError,
+            } = await supabase.storage
+                .from(STORAGE_BUCKET)
+                .upload(storagePath, file, {
+                    cacheControl: '3600',
+                    contentType:
+                        file.type ||
+                        'application/octet-stream',
+                    upsert: false,
+                })
+
+            if (uploadError) {
+                throw new Error(
+                    `${file.name}: ${uploadError.message}`
+                )
+            }
+
+            const {
+                data: publicUrlData,
+            } = supabase.storage
+                .from(STORAGE_BUCKET)
+                .getPublicUrl(storagePath)
+
+            uploadedMedia.push({
+                path: storagePath,
+                publicUrl:
+                    publicUrlData.publicUrl,
+            })
+        }
+
+        return uploadedMedia
+    }
+
+    async function removeUploadedFiles(
+        uploadedMedia: UploadedMedia[]
+    ) {
+        if (uploadedMedia.length === 0) {
+            return
+        }
+
+        const paths = uploadedMedia.map(
+            (item) => item.path
+        )
+
+        const { error: removeError } =
+            await supabase.storage
+                .from(STORAGE_BUCKET)
+                .remove(paths)
+
+        if (removeError) {
+            console.error(
+                'Erro ao remover uploads:',
+                removeError
+            )
+        }
+    }
+
     async function handleSubmit(
         event: FormEvent<HTMLFormElement>
     ) {
         event.preventDefault()
 
         setError(null)
+        setUploadProgress(null)
         setIsLoading(true)
 
-        const {
-            data: { user },
-            error: userError,
-        } = await supabase.auth.getUser()
+        let uploadedMedia: UploadedMedia[] = []
 
-        if (userError || !user) {
-            setError(
-                locale === 'pt'
-                    ? 'Você precisa estar logado.'
-                    : 'You need to be logged in.'
+        try {
+            const {
+                data: { user },
+                error: userError,
+            } = await supabase.auth.getUser()
+
+            if (userError || !user) {
+                router.push(`/${locale}/login`)
+                router.refresh()
+                return
+            }
+
+            const slug = createSlug(form.slug)
+
+            if (!form.name_pt.trim()) {
+                throw new Error(
+                    locale === 'pt'
+                        ? 'O nome em português é obrigatório.'
+                        : 'The Portuguese name is required.'
+                )
+            }
+
+            if (!slug) {
+                throw new Error(
+                    locale === 'pt'
+                        ? 'O slug é obrigatório.'
+                        : 'The slug is required.'
+                )
+            }
+
+            if (mediaFiles.length === 0) {
+                throw new Error(
+                    locale === 'pt'
+                        ? 'Adicione pelo menos uma imagem ou vídeo.'
+                        : 'Add at least one image or video.'
+                )
+            }
+
+            uploadedMedia =
+                await uploadMediaFiles(slug)
+
+            const mediaUrls = uploadedMedia.map(
+                (item) => item.publicUrl
             )
 
-            setIsLoading(false)
-            router.push(`/${locale}/login`)
-            return
-        }
-
-        const slug = createSlug(form.slug)
-
-        if (!form.name_pt.trim()) {
-            setError(
-                locale === 'pt'
-                    ? 'O nome em português é obrigatório.'
-                    : 'The Portuguese name is required.'
-            )
-
-            setIsLoading(false)
-            return
-        }
-
-        if (!slug) {
-            setError(
-                locale === 'pt'
-                    ? 'O slug é obrigatório.'
-                    : 'The slug is required.'
-            )
-
-            setIsLoading(false)
-            return
-        }
-
-        const { error: insertError } =
-            await supabase
+            const {
+                error: insertError,
+            } = await supabase
                 .from('projects')
                 .insert({
-                    name_pt: form.name_pt.trim(),
+                    name_pt:
+                        form.name_pt.trim(),
                     name_en:
-                        form.name_en.trim() || null,
+                        form.name_en.trim() ||
+                        null,
                     slug,
                     category: form.category,
                     year:
                         form.year.trim() || null,
-                    media: parseMedia(form.media),
+                    media: mediaUrls,
                     description_pt:
                         form.description_pt.trim() ||
                         null,
@@ -190,34 +364,45 @@ export default function NewProjectForm({
                         form.is_featured,
                 })
 
-        if (insertError) {
-            console.error(insertError)
+            if (insertError) {
+                if (insertError.code === '23505') {
+                    throw new Error(
+                        locale === 'pt'
+                            ? 'Já existe um projeto com esse slug.'
+                            : 'A project with this slug already exists.'
+                    )
+                }
 
-            if (
-                insertError.code === '23505'
-            ) {
-                setError(
+                throw new Error(
                     locale === 'pt'
-                        ? 'Já existe um projeto com esse slug.'
-                        : 'A project with this slug already exists.'
-                )
-            } else {
-                setError(
-                    locale === 'pt'
-                        ? 'Não foi possível criar o projeto.'
-                        : 'The project could not be created.'
+                        ? `Não foi possível criar o projeto: ${insertError.message}`
+                        : `The project could not be created: ${insertError.message}`
                 )
             }
 
+            setUploadProgress(null)
+
+            router.push(
+                `/${locale}/projetos/${slug}`
+            )
+
+            router.refresh()
+        } catch (submitError) {
+            await removeUploadedFiles(
+                uploadedMedia
+            )
+
+            setError(
+                submitError instanceof Error
+                    ? submitError.message
+                    : locale === 'pt'
+                      ? 'Ocorreu um erro inesperado.'
+                      : 'An unexpected error occurred.'
+            )
+        } finally {
             setIsLoading(false)
-            return
+            setUploadProgress(null)
         }
-
-        router.push(
-            `/${locale}/projetos/${slug}`
-        )
-
-        router.refresh()
     }
 
     return (
@@ -322,18 +507,112 @@ export default function NewProjectForm({
             </Field>
 
             <Field
-                label="Mídias"
-                description="Coloque uma URL por linha."
+                label={
+                    locale === 'pt'
+                        ? 'Imagens e vídeos'
+                        : 'Images and videos'
+                }
+                description={
+                    locale === 'pt'
+                        ? 'Você pode selecionar vários arquivos.'
+                        : 'You can select multiple files.'
+                }
             >
-                <textarea
-                    name="media"
-                    value={form.media}
-                    onChange={handleInputChange}
-                    rows={8}
-                    placeholder={`https://...\nhttps://...`}
-                    className={textareaClassName}
+                <input
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handleMediaChange}
+                    disabled={isLoading}
+                    className="
+                        w-full
+                        cursor-pointer
+                        border
+                        border-current
+                        p-4
+                        file:mr-4
+                        file:cursor-pointer
+                        file:border
+                        file:border-current
+                        file:bg-transparent
+                        file:px-4
+                        file:py-2
+                        file:text-current
+                        disabled:cursor-not-allowed
+                        disabled:opacity-40
+                    "
                 />
             </Field>
+
+            {mediaFiles.length > 0 && (
+                <div className="flex flex-col gap-3">
+                    <p className="text-sm">
+                        {locale === 'pt'
+                            ? `${mediaFiles.length} arquivo(s) selecionado(s)`
+                            : `${mediaFiles.length} file(s) selected`}
+                    </p>
+
+                    <ul className="flex flex-col gap-2">
+                        {mediaFiles.map(
+                            (file, index) => (
+                                <li
+                                    key={`${file.name}-${file.lastModified}-${index}`}
+                                    className="
+                                        flex
+                                        items-center
+                                        justify-between
+                                        gap-4
+                                        border-b
+                                        border-current
+                                        py-3
+                                    "
+                                >
+                                    <div className="min-w-0">
+                                        <p className="truncate text-sm">
+                                            {file.name}
+                                        </p>
+
+                                        <p className="text-xs opacity-50">
+                                            {file.type ||
+                                                'Arquivo'}{' '}
+                                            ·{' '}
+                                            {formatFileSize(
+                                                file.size
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            removeMediaFile(
+                                                index
+                                            )
+                                        }
+                                        disabled={
+                                            isLoading
+                                        }
+                                        className="
+                                            shrink-0
+                                            text-xs
+                                            uppercase
+                                            text-red-500
+                                            transition-opacity
+                                            hover:opacity-50
+                                            disabled:cursor-not-allowed
+                                            disabled:opacity-40
+                                        "
+                                    >
+                                        {locale === 'pt'
+                                            ? 'Remover'
+                                            : 'Remove'}
+                                    </button>
+                                </li>
+                            )
+                        )}
+                    </ul>
+                </div>
+            )}
 
             <label
                 className="
@@ -349,11 +628,22 @@ export default function NewProjectForm({
                     type="checkbox"
                     checked={form.is_featured}
                     onChange={handleInputChange}
+                    disabled={isLoading}
                     className="size-4"
                 />
 
-                <span>Projeto em destaque</span>
+                <span>
+                    {locale === 'pt'
+                        ? 'Projeto em destaque'
+                        : 'Featured project'}
+                </span>
             </label>
+
+            {uploadProgress && (
+                <p className="text-sm">
+                    {uploadProgress}
+                </p>
+            )}
 
             {error && (
                 <p
@@ -382,11 +672,11 @@ export default function NewProjectForm({
             >
                 {isLoading
                     ? locale === 'pt'
-                        ? 'Criando...'
-                        : 'Creating...'
+                        ? 'Enviando...'
+                        : 'Uploading...'
                     : locale === 'pt'
-                      ? 'Criar projeto'
-                      : 'Create project'}
+                        ? 'Criar projeto'
+                        : 'Create project'}
             </button>
         </form>
     )
