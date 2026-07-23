@@ -30,6 +30,7 @@ type FormState = {
     name_pt: string
     name_en: string
     slug: string
+    client: string
     category: ProjectCategory
     year: string
     description_pt: string
@@ -46,6 +47,7 @@ const initialState: FormState = {
     name_pt: '',
     name_en: '',
     slug: '',
+    client: '',
     category: PROJECT_CATEGORIES[0],
     year: '',
     description_pt: '',
@@ -439,6 +441,17 @@ export default function NewProjectForm({
                     />
                 </Field>
             </div>
+
+            <Field label="Cliente">
+                <input
+                    name="Cliente"
+                    type="text"
+                    value={form.client}
+                    onChange={handleInputChange}
+                    required
+                    className={inputClassName}
+                />
+            </Field>
 
             <Field label="Slug">
                 <input

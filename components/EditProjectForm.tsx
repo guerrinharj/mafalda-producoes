@@ -27,6 +27,7 @@ export type EditableProject = {
     name_pt: string
     name_en: string | null
     slug: string
+    client: string
     category: ProjectCategory
     year: string | null
     media: string[]
@@ -43,6 +44,7 @@ type EditProjectFormProps = {
 type FormState = {
     name_pt: string
     name_en: string
+    client: string
     slug: string
     category: ProjectCategory
     year: string
@@ -152,6 +154,7 @@ export default function EditProjectForm({
         name_pt: project.name_pt,
         name_en: project.name_en ?? '',
         slug: project.slug,
+        client: project.client,
         category: project.category,
         year: project.year ?? '',
         description_pt:
