@@ -42,23 +42,23 @@ export default async function NewProjectPage({
                     min-h-screen
                     px-6
                     pb-24
-                    pt-32
+                    pt-24
                     md:px-12
                 "
             >
-                <header className="mb-16">
-                    <h1
-                        className="
-                            text-4xl
-                            leading-none
-                            md:text-7xl
-                        "
-                    >
-                        {locale === 'pt'
-                            ? 'Adicionar projeto'
-                            : 'Add project'}
-                    </h1>
-                </header>
+            <header className="mb-16 w-full flex justify-center">
+                <h1
+                    className="
+                        text-4xl
+                        leading-none
+                        md:text-4xl
+                    "
+                >
+                    {locale === 'pt'
+                        ? 'Adicionar projeto'
+                        : 'Add project'}
+                </h1>
+            </header>
 
                 <NewProjectForm
                     locale={locale as Locale}
