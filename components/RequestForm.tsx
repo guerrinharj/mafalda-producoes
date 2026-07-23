@@ -7,10 +7,9 @@ import {
 } from 'react'
 import { useFormStatus } from 'react-dom'
 
-import {
-    createRequest,
-    type RequestFormState,
-} from '@/app/[locale]/arte-e-joalheria/solicitacao/actions'
+import { createRequest } from '../app//[locale]/arte-e-joalheria/solicitacao/actions'
+
+import type { RequestFormState } from '@/types/database'
 
 const initialState: RequestFormState = {
     success: false,

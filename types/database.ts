@@ -3,11 +3,15 @@ export type ProjectCategory =
     | 'audiovisual'
     | 'art_jewelry'
 
+export const requestStatuses = [
+    'new',
+    'in_progress',
+    'completed',
+    'archived',
+] as const
+
 export type RequestStatus =
-    | 'new'
-    | 'in_progress'
-    | 'completed'
-    | 'archived'
+    (typeof requestStatuses)[number]
 
 export type Project = {
     id: string
@@ -59,4 +63,19 @@ export type RequestUpdate = {
     email?: string
     request?: string
     status?: RequestStatus
+}
+
+export type RequestFormState = {
+    success: boolean
+    message: string
+    errors?: {
+        name?: string
+        email?: string
+        request?: string
+    }
+}
+
+export type UpdateRequestStatusState = {
+    success: boolean
+    message: string
 }
