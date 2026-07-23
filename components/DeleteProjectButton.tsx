@@ -95,7 +95,7 @@ export default function DeleteProjectButton({
             return
         }
 
-        router.push(`/${locale}/projetos`)
+        router.push(`/${locale}`)
         router.refresh()
     }
 
