@@ -15,13 +15,13 @@ export type Project = {
     name_en: string | null
     slug: string
     category: ProjectCategory
+    client: string | null
     year: string | null
     media: string[]
     description_pt: string | null
     description_en: string | null
     is_featured: boolean
     created_at: string
-    updated_at: string
 }
 
 export type ProjectInsert = {
