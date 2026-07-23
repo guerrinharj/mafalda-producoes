@@ -3,6 +3,10 @@ import { notFound } from 'next/navigation'
 import PageContainer from '@/components/PageContainer'
 import RequestForm from '@/components/RequestForm'
 
+import RequestStatusButton from '@/components/RequestStatusButton'
+
+import type { RequestStatus } from '@/types/database'
+
 import {
     getDictionary,
     isLocale,
@@ -287,22 +291,11 @@ export default async function RequestPage({
                                                         </a>
                                                     </div>
 
-                                                    <span
-                                                        className="
-                                                            w-fit
-                                                            border
-                                                            border-current
-                                                            px-3
-                                                            py-1
-                                                            text-xs
-                                                            uppercase
-                                                            tracking-wide
-                                                        "
-                                                    >
-                                                        {
-                                                            statusLabel
-                                                        }
-                                                    </span>
+                                                    <RequestStatusButton
+                                                        requestId={item.id}
+                                                        initialStatus={item.status as RequestStatus}
+                                                        locale={locale}
+                                                    />
                                                 </div>
 
                                                 <p

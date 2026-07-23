@@ -1,18 +1,16 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { Resend } from 'resend'
 
 import { createClient } from '@/lib/supabase/server'
 
-export type RequestFormState = {
-    success: boolean
-    message: string
-    errors?: {
-        name?: string
-        email?: string
-        request?: string
-    }
-}
+import {
+    requestStatuses,
+    type RequestFormState,
+    type RequestStatus,
+    type UpdateRequestStatusState,
+} from '@/types/database'
 
 const initialErrorState: RequestFormState = {
     success: false,
@@ -32,20 +30,34 @@ function escapeHtml(value: string) {
         .replaceAll("'", '&#039;')
 }
 
+function isRequestStatus(
+    value: string
+): value is RequestStatus {
+    return requestStatuses.includes(
+        value as RequestStatus
+    )
+}
+
 export async function createRequest(
     previousState: RequestFormState,
     formData: FormData
 ): Promise<RequestFormState> {
-    const name = String(formData.get('name') ?? '').trim()
+    const name = String(
+        formData.get('name') ?? ''
+    ).trim()
 
     const email = String(formData.get('email') ?? '')
         .trim()
         .toLowerCase()
 
-    const request = String(formData.get('request') ?? '').trim()
+    const request = String(
+        formData.get('request') ?? ''
+    ).trim()
 
     // Campo invisível para reduzir spam automatizado.
-    const website = String(formData.get('website') ?? '').trim()
+    const website = String(
+        formData.get('website') ?? ''
+    ).trim()
 
     if (website) {
         return {
@@ -73,24 +85,27 @@ export async function createRequest(
     if (Object.keys(errors).length > 0) {
         return {
             success: false,
-            message: 'Verifique os campos do formulário.',
+            message:
+                'Verifique os campos do formulário.',
             errors,
         }
     }
 
     const supabase = await createClient()
 
-    const { data: createdRequest, error: databaseError } =
-        await supabase
-            .from('requests')
-            .insert({
-                name,
-                email,
-                request,
-                status: 'new',
-            })
-            .select('id, created_at')
-            .single()
+    const {
+        data: createdRequest,
+        error: databaseError,
+    } = await supabase
+        .from('requests')
+        .insert({
+            name,
+            email,
+            request,
+            status: 'new',
+        })
+        .select('id, created_at')
+        .single()
 
     if (databaseError) {
         console.error(
@@ -101,8 +116,11 @@ export async function createRequest(
         return initialErrorState
     }
 
-    const resendApiKey = process.env.RESEND_API_KEY
-    const fromEmail = process.env.RESEND_FROM_EMAIL
+    const resendApiKey =
+        process.env.RESEND_API_KEY
+
+    const fromEmail =
+        process.env.RESEND_FROM_EMAIL
 
     if (!resendApiKey || !fromEmail) {
         console.error(
@@ -120,258 +138,268 @@ export async function createRequest(
 
     const safeName = escapeHtml(name)
     const safeEmail = escapeHtml(email)
-    const safeRequest = escapeHtml(request).replaceAll(
-        '\n',
-        '<br>'
-    )
 
-    const createdAt = new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'long',
-        timeStyle: 'short',
-        timeZone: 'America/Sao_Paulo',
-    }).format(new Date(createdRequest.created_at))
+    const safeRequest = escapeHtml(
+        request
+    ).replaceAll('\n', '<br>')
 
-    const { error: emailError } = await resend.emails.send({
-        from: fromEmail,
-        to: 'mafaldaproducoesltda@gmail.com',
-        replyTo: email,
-        subject: `Nova solicitação de ${name}`,
+    const createdAt = new Intl.DateTimeFormat(
+        'pt-BR',
+        {
+            dateStyle: 'long',
+            timeStyle: 'short',
+            timeZone: 'America/Sao_Paulo',
+        }
+    ).format(new Date(createdRequest.created_at))
 
-        text: [
-            'Uma nova solicitação foi criada pelo site.',
-            '',
-            `Nome: ${name}`,
-            `E-mail: ${email}`,
-            `ID: ${createdRequest.id}`,
-            `Criada em: ${createdAt}`,
-            '',
-            'Solicitação:',
-            request,
-        ].join('\n'),
+    const { error: emailError } =
+        await resend.emails.send({
+            from: fromEmail,
+            to: 'mafaldaproducoesltda@gmail.com',
+            replyTo: email,
+            subject: `Nova solicitação de ${name}`,
 
-        html: `
-            <!DOCTYPE html>
-            <html lang="pt-BR">
-                <head>
-                    <meta charset="UTF-8" />
-                    <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1.0"
-                    />
-                    <title>Nova solicitação</title>
-                </head>
+            text: [
+                'Uma nova solicitação foi criada pelo site.',
+                '',
+                `Nome: ${name}`,
+                `E-mail: ${email}`,
+                `ID: ${createdRequest.id}`,
+                `Criada em: ${createdAt}`,
+                '',
+                'Solicitação:',
+                request,
+            ].join('\n'),
 
-                <body
-                    style="
-                        margin: 0;
-                        padding: 0;
-                        background-color: #f4f0e7;
-                        color: #111111;
-                        font-family: Arial, Helvetica, sans-serif;
-                    "
-                >
-                    <div
+            html: `
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                    <head>
+                        <meta charset="UTF-8" />
+
+                        <meta
+                            name="viewport"
+                            content="width=device-width, initial-scale=1.0"
+                        />
+
+                        <title>Nova solicitação</title>
+                    </head>
+
+                    <body
                         style="
-                            width: 100%;
-                            padding: 40px 16px;
-                            box-sizing: border-box;
+                            margin: 0;
+                            padding: 0;
+                            background-color: #f4f0e7;
+                            color: #111111;
+                            font-family: Arial, Helvetica, sans-serif;
                         "
                     >
                         <div
                             style="
-                                max-width: 640px;
-                                margin: 0 auto;
-                                background-color: #ffffff;
-                                border: 1px solid #111111;
-                                padding: 40px;
+                                width: 100%;
+                                padding: 40px 16px;
                                 box-sizing: border-box;
                             "
                         >
-                            <p
+                            <div
                                 style="
-                                    margin: 0 0 12px;
-                                    font-size: 12px;
-                                    text-transform: uppercase;
-                                    letter-spacing: 2px;
-                                    color: #666666;
+                                    max-width: 640px;
+                                    margin: 0 auto;
+                                    background-color: #ffffff;
+                                    border: 1px solid #111111;
+                                    padding: 40px;
+                                    box-sizing: border-box;
                                 "
                             >
-                                Mafalda Produções Artísticas
-                            </p>
-
-                            <h1
-                                style="
-                                    margin: 0 0 32px;
-                                    font-size: 32px;
-                                    line-height: 1.1;
-                                    font-weight: 500;
-                                "
-                            >
-                                Nova solicitação
-                            </h1>
-
-                            <table
-                                role="presentation"
-                                style="
-                                    width: 100%;
-                                    border-collapse: collapse;
-                                    margin-bottom: 32px;
-                                "
-                            >
-                                <tr>
-                                    <td
-                                        style="
-                                            width: 120px;
-                                            padding: 12px 0;
-                                            border-bottom: 1px solid #dddddd;
-                                            font-size: 13px;
-                                            text-transform: uppercase;
-                                            letter-spacing: 1px;
-                                            color: #666666;
-                                            vertical-align: top;
-                                        "
-                                    >
-                                        Nome
-                                    </td>
-
-                                    <td
-                                        style="
-                                            padding: 12px 0;
-                                            border-bottom: 1px solid #dddddd;
-                                            font-size: 16px;
-                                            vertical-align: top;
-                                        "
-                                    >
-                                        ${safeName}
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td
-                                        style="
-                                            width: 120px;
-                                            padding: 12px 0;
-                                            border-bottom: 1px solid #dddddd;
-                                            font-size: 13px;
-                                            text-transform: uppercase;
-                                            letter-spacing: 1px;
-                                            color: #666666;
-                                            vertical-align: top;
-                                        "
-                                    >
-                                        E-mail
-                                    </td>
-
-                                    <td
-                                        style="
-                                            padding: 12px 0;
-                                            border-bottom: 1px solid #dddddd;
-                                            font-size: 16px;
-                                            vertical-align: top;
-                                        "
-                                    >
-                                        <a
-                                            href="mailto:${safeEmail}"
-                                            style="
-                                                color: #111111;
-                                                text-decoration: underline;
-                                            "
-                                        >
-                                            ${safeEmail}
-                                        </a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td
-                                        style="
-                                            width: 120px;
-                                            padding: 12px 0;
-                                            border-bottom: 1px solid #dddddd;
-                                            font-size: 13px;
-                                            text-transform: uppercase;
-                                            letter-spacing: 1px;
-                                            color: #666666;
-                                            vertical-align: top;
-                                        "
-                                    >
-                                        Data
-                                    </td>
-
-                                    <td
-                                        style="
-                                            padding: 12px 0;
-                                            border-bottom: 1px solid #dddddd;
-                                            font-size: 16px;
-                                            vertical-align: top;
-                                        "
-                                    >
-                                        ${createdAt}
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <div style="margin-bottom: 32px;">
                                 <p
                                     style="
                                         margin: 0 0 12px;
-                                        font-size: 13px;
+                                        font-size: 12px;
                                         text-transform: uppercase;
-                                        letter-spacing: 1px;
+                                        letter-spacing: 2px;
                                         color: #666666;
                                     "
                                 >
-                                    Solicitação
+                                    Mafalda Produções Artísticas
                                 </p>
+
+                                <h1
+                                    style="
+                                        margin: 0 0 32px;
+                                        font-size: 32px;
+                                        line-height: 1.1;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    Nova solicitação
+                                </h1>
+
+                                <table
+                                    role="presentation"
+                                    style="
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                        margin-bottom: 32px;
+                                    "
+                                >
+                                    <tr>
+                                        <td
+                                            style="
+                                                width: 120px;
+                                                padding: 12px 0;
+                                                border-bottom: 1px solid #dddddd;
+                                                font-size: 13px;
+                                                text-transform: uppercase;
+                                                letter-spacing: 1px;
+                                                color: #666666;
+                                                vertical-align: top;
+                                            "
+                                        >
+                                            Nome
+                                        </td>
+
+                                        <td
+                                            style="
+                                                padding: 12px 0;
+                                                border-bottom: 1px solid #dddddd;
+                                                font-size: 16px;
+                                                vertical-align: top;
+                                            "
+                                        >
+                                            ${safeName}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td
+                                            style="
+                                                width: 120px;
+                                                padding: 12px 0;
+                                                border-bottom: 1px solid #dddddd;
+                                                font-size: 13px;
+                                                text-transform: uppercase;
+                                                letter-spacing: 1px;
+                                                color: #666666;
+                                                vertical-align: top;
+                                            "
+                                        >
+                                            E-mail
+                                        </td>
+
+                                        <td
+                                            style="
+                                                padding: 12px 0;
+                                                border-bottom: 1px solid #dddddd;
+                                                font-size: 16px;
+                                                vertical-align: top;
+                                            "
+                                        >
+                                            <a
+                                                href="mailto:${safeEmail}"
+                                                style="
+                                                    color: #111111;
+                                                    text-decoration: underline;
+                                                "
+                                            >
+                                                ${safeEmail}
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td
+                                            style="
+                                                width: 120px;
+                                                padding: 12px 0;
+                                                border-bottom: 1px solid #dddddd;
+                                                font-size: 13px;
+                                                text-transform: uppercase;
+                                                letter-spacing: 1px;
+                                                color: #666666;
+                                                vertical-align: top;
+                                            "
+                                        >
+                                            Data
+                                        </td>
+
+                                        <td
+                                            style="
+                                                padding: 12px 0;
+                                                border-bottom: 1px solid #dddddd;
+                                                font-size: 16px;
+                                                vertical-align: top;
+                                            "
+                                        >
+                                            ${createdAt}
+                                        </td>
+                                    </tr>
+                                </table>
 
                                 <div
                                     style="
-                                        padding: 20px;
-                                        border: 1px solid #dddddd;
-                                        font-size: 16px;
-                                        line-height: 1.6;
-                                        word-break: break-word;
+                                        margin-bottom: 32px;
                                     "
                                 >
-                                    ${safeRequest}
+                                    <p
+                                        style="
+                                            margin: 0 0 12px;
+                                            font-size: 13px;
+                                            text-transform: uppercase;
+                                            letter-spacing: 1px;
+                                            color: #666666;
+                                        "
+                                    >
+                                        Solicitação
+                                    </p>
+
+                                    <div
+                                        style="
+                                            padding: 20px;
+                                            border: 1px solid #dddddd;
+                                            font-size: 16px;
+                                            line-height: 1.6;
+                                            word-break: break-word;
+                                        "
+                                    >
+                                        ${safeRequest}
+                                    </div>
                                 </div>
+
+                                <a
+                                    href="mailto:${safeEmail}"
+                                    style="
+                                        display: inline-block;
+                                        padding: 14px 22px;
+                                        background-color: #111111;
+                                        color: #ffffff;
+                                        text-decoration: none;
+                                        font-size: 13px;
+                                        text-transform: uppercase;
+                                        letter-spacing: 1px;
+                                    "
+                                >
+                                    Responder solicitação
+                                </a>
+
+                                <p
+                                    style="
+                                        margin: 32px 0 0;
+                                        padding-top: 20px;
+                                        border-top: 1px solid #dddddd;
+                                        font-size: 12px;
+                                        line-height: 1.5;
+                                        color: #777777;
+                                    "
+                                >
+                                    ID da solicitação:
+                                    ${createdRequest.id}
+                                </p>
                             </div>
-
-                            <a
-                                href="mailto:${safeEmail}"
-                                style="
-                                    display: inline-block;
-                                    padding: 14px 22px;
-                                    background-color: #111111;
-                                    color: #ffffff;
-                                    text-decoration: none;
-                                    font-size: 13px;
-                                    text-transform: uppercase;
-                                    letter-spacing: 1px;
-                                "
-                            >
-                                Responder solicitação
-                            </a>
-
-                            <p
-                                style="
-                                    margin: 32px 0 0;
-                                    padding-top: 20px;
-                                    border-top: 1px solid #dddddd;
-                                    font-size: 12px;
-                                    line-height: 1.5;
-                                    color: #777777;
-                                "
-                            >
-                                ID da solicitação:
-                                ${createdRequest.id}
-                            </p>
                         </div>
-                    </div>
-                </body>
-            </html>
-        `,
-    })
+                    </body>
+                </html>
+            `,
+        })
 
     if (emailError) {
         console.error(
@@ -389,5 +417,82 @@ export async function createRequest(
     return {
         success: true,
         message: 'Solicitação enviada com sucesso.',
+    }
+}
+
+export async function updateRequestStatus(
+    requestId: string,
+    locale: string,
+    status: string
+): Promise<UpdateRequestStatusState> {
+    if (!requestId) {
+        return {
+            success: false,
+            message: 'Solicitação inválida.',
+        }
+    }
+
+    if (!isRequestStatus(status)) {
+        return {
+            success: false,
+            message: 'Status inválido.',
+        }
+    }
+
+    const supabase = await createClient()
+
+    const {
+        data: { user },
+        error: userError,
+    } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+        return {
+            success: false,
+            message:
+                'Você precisa estar autenticado.',
+        }
+    }
+
+    const { data, error } = await supabase
+        .from('requests')
+        .update({
+            status,
+        })
+        .eq('id', requestId)
+        .select('id')
+        .maybeSingle()
+
+    if (error) {
+        console.error(
+            'Erro ao atualizar status da solicitação:',
+            error
+        )
+
+        return {
+            success: false,
+            message:
+                'Não foi possível atualizar o status.',
+        }
+    }
+
+    if (!data) {
+        return {
+            success: false,
+            message:
+                'Solicitação não encontrada ou sem permissão para atualização.',
+        }
+    }
+
+    const safeLocale =
+        locale === 'en' ? 'en' : 'pt'
+
+    revalidatePath(
+        `/${safeLocale}/arte-e-joalheria/solicitacao`
+    )
+
+    return {
+        success: true,
+        message: 'Status atualizado com sucesso.',
     }
 }
