@@ -139,7 +139,7 @@ export default function Navbar({
                 <>
                     <AddProjectButton locale={locale} />
 
-                    <div className="fixed left-8 top-1/2 z-50 -translate-y-1/2">
+                    <div className="fixed left-1/2 top-10 z-50 -translate-y-1/2">
                         <LogoutButton locale={locale} />
                     </div>
                 </>
