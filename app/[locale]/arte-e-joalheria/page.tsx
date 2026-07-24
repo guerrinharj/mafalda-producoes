@@ -37,9 +37,7 @@ export default async function ArteEJoalheriaPage({
                 className="
                     flex
                     justify-end
-                    px-6
-                    pt-32
-                    md:px-12
+                    absolute
                 "
             >
                 <Link

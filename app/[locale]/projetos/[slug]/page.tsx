@@ -169,11 +169,12 @@ export default async function ProjectPage({
                         )}
                     </section>
                 )}
-                
+
                 <header
                     className="
                         mx-auto
                         mb-16
+                        mt-8
                         flex
                         w-full
                         max-w-6xl
