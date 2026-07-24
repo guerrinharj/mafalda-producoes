@@ -113,6 +113,63 @@ export default async function ProjectPage({
                     md:px-12
                 "
             >
+
+            {media.length > 0 && (
+                    <section
+                        className="
+                            mx-auto
+                            flex
+                            w-full
+                            max-w-6xl
+                            flex-col
+                            gap-8
+                        "
+                    >
+                        {media.map(
+                            (mediaUrl, index) => (
+                                <div
+                                    key={`${mediaUrl}-${index}`}
+                                    className="
+                                        w-full
+                                        overflow-hidden
+                                    "
+                                >
+                                    {isVideo(
+                                        mediaUrl
+                                    ) ? (
+                                        <video
+                                            src={
+                                                mediaUrl
+                                            }
+                                            controls
+                                            playsInline
+                                            preload="metadata"
+                                            className="
+                                                h-auto
+                                                w-full
+                                                object-cover
+                                            "
+                                        />
+                                    ) : (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={
+                                                mediaUrl
+                                            }
+                                            alt={`${projectName} ${index + 1}`}
+                                            className="
+                                                h-auto
+                                                w-full
+                                                object-cover
+                                            "
+                                        />
+                                    )}
+                                </div>
+                            )
+                        )}
+                    </section>
+                )}
+                
                 <header
                     className="
                         mx-auto
@@ -191,61 +248,7 @@ export default async function ProjectPage({
                     )}
                 </header>
 
-                {media.length > 0 && (
-                    <section
-                        className="
-                            mx-auto
-                            flex
-                            w-full
-                            max-w-6xl
-                            flex-col
-                            gap-8
-                        "
-                    >
-                        {media.map(
-                            (mediaUrl, index) => (
-                                <div
-                                    key={`${mediaUrl}-${index}`}
-                                    className="
-                                        w-full
-                                        overflow-hidden
-                                    "
-                                >
-                                    {isVideo(
-                                        mediaUrl
-                                    ) ? (
-                                        <video
-                                            src={
-                                                mediaUrl
-                                            }
-                                            controls
-                                            playsInline
-                                            preload="metadata"
-                                            className="
-                                                h-auto
-                                                w-full
-                                                object-cover
-                                            "
-                                        />
-                                    ) : (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
-                                            src={
-                                                mediaUrl
-                                            }
-                                            alt={`${projectName} ${index + 1}`}
-                                            className="
-                                                h-auto
-                                                w-full
-                                                object-cover
-                                            "
-                                        />
-                                    )}
-                                </div>
-                            )
-                        )}
-                    </section>
-                )}
+                
 
                 <Link
                     href={`/${locale}/projetos`}
@@ -259,8 +262,8 @@ export default async function ProjectPage({
                     "
                 >
                     {locale === 'pt'
-                        ? 'Voltar'
-                        : 'Back'}
+                        ? ''
+                        : ''}
                 </Link>
             </main>
         </PageContainer>
