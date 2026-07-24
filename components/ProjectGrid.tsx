@@ -45,9 +45,8 @@ export default function ProjectGrid({
                     flex
                     min-h-screen
                     flex-col
-                    justify-center
+                    justify-start
                     px-4
-                    py-32
                     md:px-8
                 "
             >
