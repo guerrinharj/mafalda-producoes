@@ -113,87 +113,8 @@ export default async function ProjectPage({
                     md:px-12
                 "
             >
-                <header
-                    className="
-                        mx-auto
-                        mb-16
-                        flex
-                        w-full
-                        max-w-6xl
-                        flex-col
-                        gap-6
-                    "
-                >
-                    <div
-                        className="
-                            flex
-                            items-start
-                            justify-between
-                            gap-6
-                        "
-                    >
-                        <h1
-                            className="
-                                text-4xl
-                                leading-none
-                                md:text-6xl
-                            "
-                        >
-                            {projectName}
-                        </h1>
 
-                        {user && (
-                            <EditProjectButton
-                                locale={
-                                    locale as Locale
-                                }
-                                slug={project.slug}
-                            />
-                        )}
-
-                        {user && (
-                            <DeleteProjectButton
-                                locale={locale as Locale}
-                                id={project.id}
-                                slug={project.slug}
-                            />
-                            )}
-                    </div>
-
-                    <div
-                        className="
-                            flex
-                            flex-wrap
-                            gap-x-8
-                            gap-y-2
-                            text-sm
-                        "
-                    >
-                        <span>
-                            {project.category}
-                        </span>
-
-                        {project.year && (
-                            <span>
-                                {project.year}
-                            </span>
-                        )}
-                    </div>
-
-                    {description && (
-                        <p
-                            className="
-                                max-w-3xl
-                                whitespace-pre-line
-                                leading-relaxed
-                            "
-                        >
-                            {description}
-                        </p>
-                    )}
-                </header>
-
-                {media.length > 0 && (
+            {media.length > 0 && (
                     <section
                         className="
                             mx-auto
@@ -249,6 +170,87 @@ export default async function ProjectPage({
                     </section>
                 )}
 
+                <header
+                    className="
+                        mx-auto
+                        mb-16
+                        mt-8
+                        flex
+                        w-full
+                        max-w-6xl
+                        flex-col
+                        gap-6
+                    "
+                >
+                    <div
+                        className="
+                            flex
+                            items-start
+                            justify-between
+                            gap-6
+                        "
+                    >
+                        <h1
+                            className="
+                                text-4xl
+                                font-franklin
+                                leading-none
+                                md:text-6xl
+                            "
+                        >
+                            {projectName}
+                        </h1>
+
+                        {user && (
+                            <EditProjectButton
+                                locale={
+                                    locale as Locale
+                                }
+                                slug={project.slug}
+                            />
+                        )}
+
+                        {user && (
+                            <DeleteProjectButton
+                                locale={locale as Locale}
+                                id={project.id}
+                                slug={project.slug}
+                            />
+                            )}
+                    </div>
+
+                    <div
+                        className="
+                            flex
+                            flex-wrap
+                            gap-x-8
+                            gap-y-2
+                            text-sm
+                        "
+                    >
+
+                        {project.year && (
+                            <span>
+                                {project.year}
+                            </span>
+                        )}
+                    </div>
+
+                    {description && (
+                        <p
+                            className="
+                                max-w-3xl
+                                whitespace-pre-line
+                                leading-relaxed
+                            "
+                        >
+                            {description}
+                        </p>
+                    )}
+                </header>
+
+                
+
                 <Link
                     href={`/${locale}/projetos`}
                     className="
@@ -261,8 +263,8 @@ export default async function ProjectPage({
                     "
                 >
                     {locale === 'pt'
-                        ? 'Voltar'
-                        : 'Back'}
+                        ? ''
+                        : ''}
                 </Link>
             </main>
         </PageContainer>

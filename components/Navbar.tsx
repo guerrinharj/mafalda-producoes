@@ -33,6 +33,7 @@ const linkClass = `
     after:transition-transform
     after:duration-300
     after:ease-out
+    font-franklin
 
     hover:after:scale-x-100
 `
