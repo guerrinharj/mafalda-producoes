@@ -39,7 +39,7 @@ export default function ProjectGrid({
     )
 
     return (
-        <section className="relative w-full">
+        <section className="relative w-full pt-20">
             <div
                 className="
                     flex
