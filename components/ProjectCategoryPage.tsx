@@ -31,7 +31,10 @@ export default async function ProjectCategoryPage({
         })
 
     if (error) {
-        console.error('Erro ao buscar projetos:', error)
+        console.error(
+            'Erro ao buscar projetos:',
+            error
+        )
 
         return (
             <p className="text-sm text-red-600">
@@ -42,28 +45,10 @@ export default async function ProjectCategoryPage({
 
     const projects = (data ?? []) as Project[]
 
-    const featuredProjects = projects.filter(
-        (project) => project.is_featured
-    )
-
-    if (projects.length === 0) {
-        return (
-            <p className="text-sm text-neutral-500">
-                Nenhum projeto encontrado.
-            </p>
-        )
-    }
-
     return (
-        <div className="space-y-32">
-            {featuredProjects.length > 0 && (
-                <section>
-                    <ProjectGrid
-                        projects={featuredProjects}
-                        locale={locale}
-                    />
-                </section>
-            )}
-        </div>
+        <ProjectGrid
+            projects={projects}
+            locale={locale}
+        />
     )
 }

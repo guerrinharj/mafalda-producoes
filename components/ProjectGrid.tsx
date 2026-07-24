@@ -19,20 +19,27 @@ export default function ProjectGrid({
         useState(false)
 
     const featuredProjects = projects.filter(
-        (project) => project.is_featured
+        (project) => project.is_featured === true
     )
 
-    const archivedProjects = projects
-        .filter((project) => !project.is_featured)
-        .sort((a, b) => {
+    const archiveProjects = [...projects].sort(
+        (a, b) => {
             const yearA = Number(a.year) || 0
             const yearB = Number(b.year) || 0
 
-            return yearB - yearA
-        })
+            if (yearA !== yearB) {
+                return yearB - yearA
+            }
+
+            return (
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime()
+            )
+        }
+    )
 
     return (
-        <section className="relative">
+        <section className="relative w-full">
             <div
                 className="
                     flex
@@ -133,183 +140,179 @@ export default function ProjectGrid({
                                         {projectName}
                                     </h2>
                                 </div>
-
-                                {project.year && (
-                                    <span
-                                        className="
-                                            ml-4
-                                            hidden
-                                            shrink-0
-                                            text-sm
-                                            opacity-70
-                                            md:block
-                                        "
-                                    >
-                                        {project.year}
-                                    </span>
-                                )}
                             </Link>
                         )
                     }
                 )}
 
-                {archivedProjects.length > 0 && (
-                    <div
+                {featuredProjects.length === 0 && (
+                    <p className="text-sm opacity-50">
+                        Nenhum projeto em destaque.
+                    </p>
+                )}
+            </div>
+
+            <div
+                className="
+                    px-4
+                    pb-32
+                    md:px-8
+                "
+            >
+                <div
+                    className="
+                        border-t
+                        border-b
+                        border-current/20
+                        opacity-60
+                    "
+                >
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setIsArchiveOpen(
+                                (current) => !current
+                            )
+                        }
+                        aria-expanded={isArchiveOpen}
+                        aria-controls="projects-archive"
                         className="
-                            mt-16
-                            border-t
-                            border-current/20
-                            text-current/55
+                            flex
+                            w-full
+                            items-center
+                            justify-between
+                            py-5
+                            text-left
+                            text-sm
+                            uppercase
+                            tracking-[0.15em]
+                            transition-opacity
+                            duration-300
+                            hover:opacity-70
                         "
                     >
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setIsArchiveOpen(
-                                    (current) => !current
-                                )
-                            }
-                            aria-expanded={isArchiveOpen}
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                justify-between
-                                py-4
-                                text-left
-                                text-sm
-                                uppercase
-                                tracking-[0.15em]
-                                transition-opacity
-                                duration-300
-                                hover:opacity-70
-                            "
-                        >
-                            <span>Archive</span>
+                        <span>
+                            Archive ({archiveProjects.length})
+                        </span>
 
-                            <span
-                                aria-hidden="true"
-                                className={`
-                                    text-lg
-                                    transition-transform
-                                    duration-500
-                                    ease-out
-                                    ${
-                                        isArchiveOpen
-                                            ? 'rotate-45'
-                                            : 'rotate-0'
-                                    }
-                                `}
-                            >
-                                +
-                            </span>
-                        </button>
-
-                        <div
+                        <span
+                            aria-hidden="true"
                             className={`
-                                grid
-                                transition-[grid-template-rows]
+                                text-lg
+                                transition-transform
                                 duration-500
-                                ease-in-out
+                                ease-out
                                 ${
                                     isArchiveOpen
-                                        ? 'grid-rows-[1fr]'
-                                        : 'grid-rows-[0fr]'
+                                        ? 'rotate-45'
+                                        : 'rotate-0'
                                 }
                             `}
                         >
-                            <div className="overflow-hidden">
-                                <div
-                                    className="
-                                        border-t
-                                        border-current/15
-                                        pb-6
-                                    "
-                                >
-                                    {archivedProjects.map(
-                                        (project) => {
-                                            const projectName =
-                                                locale ===
-                                                'pt'
-                                                    ? project.name_pt
-                                                    : project.name_en ||
-                                                      project.name_pt
+                            +
+                        </span>
+                    </button>
 
-                                            return (
-                                                <Link
-                                                    key={
-                                                        project.id
-                                                    }
-                                                    href={`/${locale}/projetos/${project.slug}`}
+                    <div
+                        id="projects-archive"
+                        className={`
+                            grid
+                            transition-[grid-template-rows]
+                            duration-500
+                            ease-in-out
+                            ${
+                                isArchiveOpen
+                                    ? 'grid-rows-[1fr]'
+                                    : 'grid-rows-[0fr]'
+                            }
+                        `}
+                    >
+                        <div className="overflow-hidden">
+                            <div
+                                className="
+                                    pb-6
+                                "
+                            >
+                                {archiveProjects.map(
+                                    (project) => {
+                                        const projectName =
+                                            locale === 'pt'
+                                                ? project.name_pt
+                                                : project.name_en ||
+                                                  project.name_pt
+
+                                        return (
+                                            <Link
+                                                key={
+                                                    project.id
+                                                }
+                                                href={`/${locale}/projetos/${project.slug}`}
+                                                className="
+                                                    group
+                                                    flex
+                                                    items-center
+                                                    justify-between
+                                                    gap-6
+                                                    py-3
+                                                    text-sm
+                                                    transition-opacity
+                                                    duration-300
+                                                    hover:opacity-70
+                                                    md:text-base
+                                                "
+                                            >
+                                                <span
                                                     className="
-                                                        group
-                                                        flex
-                                                        items-center
-                                                        justify-between
-                                                        gap-6
-                                                        border-b
-                                                        border-current/10
-                                                        py-3
-                                                        text-sm
-                                                        transition-colors
+                                                        truncate
+                                                        transition-transform
                                                         duration-300
-                                                        hover:text-current
-                                                        md:text-base
+                                                        ease-out
+                                                        group-hover:translate-x-2
                                                     "
                                                 >
-                                                    <span
-                                                        className="
-                                                            truncate
-                                                            transition-transform
-                                                            duration-300
-                                                            ease-out
-                                                            group-hover:translate-x-2
-                                                        "
-                                                    >
-                                                        {
-                                                            projectName
-                                                        }
-                                                    </span>
+                                                    {
+                                                        projectName
+                                                    }
+                                                </span>
 
-                                                    <div
-                                                        className="
-                                                            flex
-                                                            shrink-0
-                                                            items-center
-                                                            gap-5
-                                                        "
-                                                    >
-                                                        {project.year && (
-                                                            <span className="text-xs opacity-70">
-                                                                {
-                                                                    project.year
-                                                                }
-                                                            </span>
-                                                        )}
-
-                                                        <span
-                                                            aria-hidden="true"
-                                                            className="
-                                                                -translate-x-2
-                                                                opacity-0
-                                                                transition-all
-                                                                duration-300
-                                                                group-hover:translate-x-0
-                                                                group-hover:opacity-100
-                                                            "
-                                                        >
-                                                            →
+                                                <div
+                                                    className="
+                                                        flex
+                                                        shrink-0
+                                                        items-center
+                                                        gap-5
+                                                    "
+                                                >
+                                                    {project.year && (
+                                                        <span className="text-xs opacity-70">
+                                                            {
+                                                                project.year
+                                                            }
                                                         </span>
-                                                    </div>
-                                                </Link>
-                                            )
-                                        }
-                                    )}
-                                </div>
+                                                    )}
+
+                                                    <span
+                                                        aria-hidden="true"
+                                                        className="
+                                                            -translate-x-2
+                                                            opacity-0
+                                                            transition-all
+                                                            duration-300
+                                                            group-hover:translate-x-0
+                                                            group-hover:opacity-100
+                                                        "
+                                                    >
+                                                        →
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        )
+                                    }
+                                )}
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
         </section>
     )
