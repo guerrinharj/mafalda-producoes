@@ -56,7 +56,7 @@ export default function ProjectCard({
                             flex
                             h-full
                             items-center
-                            justify-center
+                            justify-start
                             text-sm
                             text-neutral-400
                         "
