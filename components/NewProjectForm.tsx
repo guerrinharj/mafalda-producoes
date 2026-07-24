@@ -444,7 +444,7 @@ export default function NewProjectForm({
 
             <Field label="Cliente">
                 <input
-                    name="Cliente"
+                    name="client"
                     type="text"
                     value={form.client}
                     onChange={handleInputChange}

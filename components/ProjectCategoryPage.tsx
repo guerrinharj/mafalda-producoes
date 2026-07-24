@@ -64,13 +64,6 @@ export default async function ProjectCategoryPage({
                     />
                 </section>
             )}
-
-            <section>
-                <ProjectGrid
-                    projects={projects}
-                    locale={locale}
-                />
-            </section>
         </div>
     )
 }
