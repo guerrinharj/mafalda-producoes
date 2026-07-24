@@ -67,8 +67,6 @@ export default function ProjectGrid({
                                     group
                                     flex
                                     items-center
-                                    border-b
-                                    border-current/30
                                     py-3
                                     md:py-4
                                 "
@@ -135,6 +133,7 @@ export default function ProjectGrid({
                                             ease-out
                                             group-hover:translate-x-2
                                             group-focus-visible:translate-x-2
+                                            font-franklin
                                         "
                                     >
                                         {projectName}
@@ -177,6 +176,7 @@ export default function ProjectGrid({
                         aria-expanded={isArchiveOpen}
                         aria-controls="projects-archive"
                         className="
+                            font-mono
                             flex
                             w-full
                             items-center
@@ -231,6 +231,7 @@ export default function ProjectGrid({
                             <div
                                 className="
                                     pb-6
+                                    font-mono
                                 "
                             >
                                 {archiveProjects.map(

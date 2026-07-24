@@ -135,6 +135,7 @@ export default async function ProjectPage({
                         <h1
                             className="
                                 text-4xl
+                                font-franklin
                                 leading-none
                                 md:text-6xl
                             "
@@ -169,9 +170,6 @@ export default async function ProjectPage({
                             text-sm
                         "
                     >
-                        <span>
-                            {project.category}
-                        </span>
 
                         {project.year && (
                             <span>
