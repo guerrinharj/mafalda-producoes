@@ -1,0 +1,36 @@
+import { notFound } from 'next/navigation'
+
+import PageContainer from '@/components/PageContainer'
+import ProjectCategoryPage from '@/components/ProjectCategoryPage'
+
+import {
+    getDictionary,
+    isLocale,
+} from '@/lib/dictionaries'
+
+type Props = {
+    params: Promise<{
+        locale: string
+    }>
+}
+
+export default async function CareersPage({
+    params,
+}: Props) {
+    const { locale } = await params
+
+    if (!isLocale(locale)) {
+        notFound()
+    }
+
+    const dict = getDictionary(locale)
+
+    return (
+        <PageContainer>
+            <ProjectCategoryPage
+                locale={locale}
+                category="careers"
+            />
+        </PageContainer>
+    )
+}

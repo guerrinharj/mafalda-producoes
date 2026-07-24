@@ -7,6 +7,8 @@ export const dictionary = {
         artAndJewelry: 'Arte',
         budget: 'Orçamento',
         about: 'Sobre',
+        careers: 'Carreiras',
+        jewel: 'Joias'
     },
 
     common: {

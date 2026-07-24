@@ -2,6 +2,7 @@ export type ProjectCategory =
     | 'events'
     | 'audiovisual'
     | 'art_jewelry'
+    | 'careers'
 
 export const requestStatuses = [
     'new',

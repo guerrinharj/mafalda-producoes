@@ -1,7 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import {
+    useEffect,
+    useMemo,
+    useState,
+} from 'react'
 import { usePathname } from 'next/navigation'
 
 import LocaleSwitcher from '@/components/LocaleSwitcher'
@@ -16,24 +20,23 @@ import {
 import { createClient } from '@/lib/supabase/client'
 
 const linkClass = `
-    fixed
-    z-50
+    relative
     inline-block
     pb-1
+    font-franklin
     uppercase
 
     after:absolute
-    after:left-0
     after:bottom-0
+    after:left-0
     after:h-px
     after:w-full
     after:origin-left
     after:scale-x-0
-    after:bg-[#F4EEDB]
+    after:bg-current
     after:transition-transform
     after:duration-300
     after:ease-out
-    font-franklin
 
     hover:after:scale-x-100
 `
@@ -48,9 +51,13 @@ export default function Navbar({
     const dict = getDictionary(locale)
     const pathname = usePathname()
 
-    const supabase = createClient()
+    const supabase = useMemo(
+        () => createClient(),
+        []
+    )
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [isLoggedIn, setIsLoggedIn] =
+        useState(false)
 
     useEffect(() => {
         async function loadUser() {
@@ -58,93 +65,153 @@ export default function Navbar({
                 data: { user },
             } = await supabase.auth.getUser()
 
-            setIsLoggedIn(!!user)
+            setIsLoggedIn(Boolean(user))
         }
 
         loadUser()
 
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setIsLoggedIn(!!session)
-        })
+        } = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+                setIsLoggedIn(Boolean(session))
+            }
+        )
 
-        return () => subscription.unsubscribe()
+        return () => {
+            subscription.unsubscribe()
+        }
     }, [supabase])
 
-    const isActive = (href: string) => pathname === href
+    function isActive(href: string) {
+        return pathname === href
+    }
+
+    function getLinkClass(href: string) {
+        return `
+            ${linkClass}
+            ${
+                isActive(href)
+                    ? 'after:scale-x-100'
+                    : ''
+            }
+        `
+    }
 
     return (
-        <>
-            <Link
-                href={`/${locale}/eventos`}
-                className={`${linkClass}
-                    left-8
-                    top-8
-                    ${
-                        isActive(`/${locale}/eventos`)
-                            ? 'border-b border-current'
-                            : ''
-                    }`}
+        <header
+            className="
+                fixed
+                left-0
+                top-0
+                z-50
+                w-full
+                border-[#F4EEDB]/30
+                bg-black
+                text-[#F4EEDB]
+            "
+        >
+            <nav
+                className="
+                    mx-auto
+                    flex
+                    w-full
+                    items-center
+                    justify-between
+                    gap-8
+                    px-6
+                    py-5
+                    md:px-8
+                "
             >
-                {dict.nav.events}
-            </Link>
+                <div
+                    className="
+                        flex
+                        items-center
+                        gap-5
+                        text-xs
+                        md:gap-8
+                        md:text-sm
+                    "
+                >
+                    <Link
+                        href={`/${locale}/eventos`}
+                        className={getLinkClass(
+                            `/${locale}/eventos`
+                        )}
+                    >
+                        {dict.nav.events}
+                    </Link>
 
-            <Link
-                href={`/${locale}/audiovisual`}
-                className={`${linkClass}
-                    right-8
-                    top-8
-                    ${
-                        isActive(`/${locale}/audiovisual`)
-                            ? 'border-b border-current'
-                            : ''
-                    }`}
-            >
-                {dict.nav.audiovisual}
-            </Link>
+                    <Link
+                        href={`/${locale}/audiovisual`}
+                        className={getLinkClass(
+                            `/${locale}/audiovisual`
+                        )}
+                    >
+                        {dict.nav.audiovisual}
+                    </Link>
 
-            <Link
-                href={`/${locale}/arte-e-joalheria`}
-                className={`${linkClass}
-                    bottom-8
-                    left-8
-                    ${
-                        isActive(`/${locale}/arte-e-joalheria`)
-                            ? 'border-b border-current'
-                            : ''
-                    }`}
-            >
-                {dict.nav.artAndJewelry}
-            </Link>
+                    <Link
+                        href={`/${locale}/arte-e-joalheria`}
+                        className={getLinkClass(
+                            `/${locale}/arte-e-joalheria`
+                        )}
+                    >
+                        {dict.nav.artAndJewelry}
+                    </Link>
 
-            <Link
-                href={`/${locale}/sobre`}
-                className={`${linkClass}
-                    bottom-8
-                    right-8
-                    ${
-                        isActive(`/${locale}/sobre`)
-                            ? 'border-b border-current'
-                            : ''
-                    }`}
-            >
-                {dict.nav.about}
-            </Link>
+                    <Link
+                        href={`/${locale}/carreiras`}
+                        className={getLinkClass(
+                            `/${locale}/carreiras`
+                        )}
+                    >
+                        {dict.nav.careers}
+                    </Link>
 
-            <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2">
-                <LocaleSwitcher locale={locale} />
-            </div>
+                    <Link
+                        href={`/${locale}/orcamento`}
+                        className={getLinkClass(
+                            `/${locale}/orcamento`
+                        )}
+                    >
+                        {dict.nav.jewel}
+                    </Link>
 
-            {isLoggedIn && (
-                <>
-                    <AddProjectButton locale={locale} />
+                    <Link
+                        href={`/${locale}/sobre`}
+                        className={getLinkClass(
+                            `/${locale}/sobre`
+                        )}
+                    >
+                        {dict.nav.about}
+                    </Link>
+                </div>
 
-                    <div className="fixed left-1/2 top-10 z-50 -translate-y-1/2">
-                        <LogoutButton locale={locale} />
-                    </div>
-                </>
-            )}
-        </>
+                <div
+                    className="
+                        flex
+                        shrink-0
+                        items-center
+                        gap-5
+                    "
+                >
+                    <LocaleSwitcher locale={locale} />
+
+                    {isLoggedIn && (
+                        <>
+                            <AddProjectButton
+                                locale={locale}
+                            />
+
+                            <LogoutButton
+                                locale={locale}
+                            />
+                        </>
+                    )}
+                </div>
+            </nav>
+        </header>
     )
 }
