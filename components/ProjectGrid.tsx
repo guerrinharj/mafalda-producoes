@@ -104,6 +104,7 @@ export default function ProjectGrid({
                                             overflow-hidden
                                             whitespace-nowrap
                                             opacity-0
+                                            text-2xl
                                             transition-all
                                             duration-500
                                             ease-out
@@ -111,12 +112,12 @@ export default function ProjectGrid({
                                             group-hover:max-w-16
                                             group-hover:translate-x-0
                                             group-hover:opacity-100
+                                            group-hover:text-4xl
                                             group-focus-visible:mr-4
                                             group-focus-visible:max-w-16
                                             group-focus-visible:translate-x-0
                                             group-focus-visible:opacity-100
-                                            md:group-hover:mr-6
-                                            md:group-focus-visible:mr-6
+                                            group-focus-visible:text-4xl
                                         "
                                     >
                                         →
