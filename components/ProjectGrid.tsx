@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { Locale } from '@/lib/dictionaries'
 import type { Project } from '@/types/database'
@@ -17,6 +17,19 @@ export default function ProjectGrid({
 }: Props) {
     const [isArchiveOpen, setIsArchiveOpen] =
         useState(false)
+
+    const [isVisible, setIsVisible] =
+        useState(false)
+
+    useEffect(() => {
+        const frame = requestAnimationFrame(() => {
+            setIsVisible(true)
+        })
+
+        return () => {
+            cancelAnimationFrame(frame)
+        }
+    }, [])
 
     const featuredProjects = projects.filter(
         (project) => project.is_featured === true
@@ -62,13 +75,29 @@ export default function ProjectGrid({
                             <Link
                                 key={project.id}
                                 href={`/${locale}/projetos/${project.slug}`}
-                                className="
+                                style={{
+                                    transitionDelay: `${index * 80}ms`,
+                                    transitionTimingFunction:
+                                        'cubic-bezier(0.22, 1, 0.36, 1)',
+                                }}
+                                className={`
                                     group
                                     flex
                                     items-center
                                     py-3
+                                    transition-[opacity,transform]
+                                    duration-[900ms]
                                     md:py-4
-                                "
+                                    motion-reduce:translate-y-0
+                                    motion-reduce:opacity-100
+                                    motion-reduce:transition-none
+
+                                    ${
+                                        isVisible
+                                            ? 'translate-y-0 opacity-100'
+                                            : 'translate-y-3 opacity-0'
+                                    }
+                                `}
                             >
                                 <span
                                     className="
@@ -102,21 +131,21 @@ export default function ProjectGrid({
                                             -translate-x-6
                                             overflow-hidden
                                             whitespace-nowrap
-                                            opacity-0
                                             text-2xl
+                                            opacity-0
                                             transition-all
                                             duration-500
                                             ease-out
                                             group-hover:mr-4
                                             group-hover:max-w-16
                                             group-hover:translate-x-0
-                                            group-hover:opacity-100
                                             group-hover:text-4xl
+                                            group-hover:opacity-100
                                             group-focus-visible:mr-4
                                             group-focus-visible:max-w-16
                                             group-focus-visible:translate-x-0
-                                            group-focus-visible:opacity-100
                                             group-focus-visible:text-4xl
+                                            group-focus-visible:opacity-100
                                         "
                                     >
                                         →
@@ -125,6 +154,7 @@ export default function ProjectGrid({
                                     <h2
                                         className="
                                             truncate
+                                            font-franklin
                                             text-[clamp(2.5rem,7vw,8rem)]
                                             leading-[0.9]
                                             tracking-[-0.06em]
@@ -133,7 +163,6 @@ export default function ProjectGrid({
                                             ease-out
                                             group-hover:translate-x-2
                                             group-focus-visible:translate-x-2
-                                            font-franklin
                                         "
                                     >
                                         {projectName}
@@ -145,7 +174,26 @@ export default function ProjectGrid({
                 )}
 
                 {featuredProjects.length === 0 && (
-                    <p className="text-sm opacity-50">
+                    <p
+                        style={{
+                            transitionTimingFunction:
+                                'cubic-bezier(0.22, 1, 0.36, 1)',
+                        }}
+                        className={`
+                            text-sm
+                            transition-[opacity,transform]
+                            duration-[900ms]
+                            motion-reduce:translate-y-0
+                            motion-reduce:opacity-50
+                            motion-reduce:transition-none
+
+                            ${
+                                isVisible
+                                    ? 'translate-y-0 opacity-50'
+                                    : 'translate-y-3 opacity-0'
+                            }
+                        `}
+                    >
                         Nenhum projeto em destaque.
                     </p>
                 )}
@@ -159,12 +207,29 @@ export default function ProjectGrid({
                 "
             >
                 <div
-                    className="
-                        border-t
-                        border-b
+                    style={{
+                        transitionDelay: `${
+                            featuredProjects.length *
+                            80
+                        }ms`,
+                        transitionTimingFunction:
+                            'cubic-bezier(0.22, 1, 0.36, 1)',
+                    }}
+                    className={`
+                        border-y
                         border-current/20
-                        opacity-60
-                    "
+                        transition-[opacity,transform]
+                        duration-[900ms]
+                        motion-reduce:translate-y-0
+                        motion-reduce:opacity-60
+                        motion-reduce:transition-none
+
+                        ${
+                            isVisible
+                                ? 'translate-y-0 opacity-60'
+                                : 'translate-y-3 opacity-0'
+                        }
+                    `}
                 >
                     <button
                         type="button"
@@ -176,13 +241,13 @@ export default function ProjectGrid({
                         aria-expanded={isArchiveOpen}
                         aria-controls="projects-archive"
                         className="
-                            font-mono
                             flex
                             w-full
                             items-center
                             justify-between
                             py-5
                             text-left
+                            font-mono
                             text-sm
                             uppercase
                             tracking-[0.15em]
@@ -192,7 +257,8 @@ export default function ProjectGrid({
                         "
                     >
                         <span>
-                            Archive ({archiveProjects.length})
+                            Archive (
+                            {archiveProjects.length})
                         </span>
 
                         <span
@@ -202,6 +268,7 @@ export default function ProjectGrid({
                                 transition-transform
                                 duration-500
                                 ease-out
+
                                 ${
                                     isArchiveOpen
                                         ? 'rotate-45'
@@ -215,11 +282,13 @@ export default function ProjectGrid({
 
                     <div
                         id="projects-archive"
+                        aria-hidden={!isArchiveOpen}
                         className={`
                             grid
                             transition-[grid-template-rows]
-                            duration-500
-                            ease-in-out
+                            duration-700
+                            ease-[cubic-bezier(0.22,1,0.36,1)]
+
                             ${
                                 isArchiveOpen
                                     ? 'grid-rows-[1fr]'
@@ -235,7 +304,10 @@ export default function ProjectGrid({
                                 "
                             >
                                 {archiveProjects.map(
-                                    (project) => {
+                                    (
+                                        project,
+                                        index
+                                    ) => {
                                         const projectName =
                                             locale === 'pt'
                                                 ? project.name_pt
@@ -248,7 +320,20 @@ export default function ProjectGrid({
                                                     project.id
                                                 }
                                                 href={`/${locale}/projetos/${project.slug}`}
-                                                className="
+                                                tabIndex={
+                                                    isArchiveOpen
+                                                        ? 0
+                                                        : -1
+                                                }
+                                                style={{
+                                                    transitionDelay:
+                                                        isArchiveOpen
+                                                            ? `${index * 50}ms`
+                                                            : '0ms',
+                                                    transitionTimingFunction:
+                                                        'cubic-bezier(0.22, 1, 0.36, 1)',
+                                                }}
+                                                className={`
                                                     group
                                                     flex
                                                     items-center
@@ -256,11 +341,19 @@ export default function ProjectGrid({
                                                     gap-6
                                                     py-3
                                                     text-sm
-                                                    transition-opacity
-                                                    duration-300
+                                                    transition-[opacity,transform]
+                                                    duration-700
                                                     hover:opacity-70
                                                     md:text-base
-                                                "
+                                                    motion-reduce:translate-y-0
+                                                    motion-reduce:transition-none
+
+                                                    ${
+                                                        isArchiveOpen
+                                                            ? 'translate-y-0 opacity-100'
+                                                            : 'translate-y-3 opacity-0'
+                                                    }
+                                                `}
                                             >
                                                 <span
                                                     className="
