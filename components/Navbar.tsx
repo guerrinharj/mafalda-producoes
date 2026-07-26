@@ -107,7 +107,6 @@ export default function Navbar({
                 z-50
                 w-full
                 border-[#F4EEDB]/30
-                bg-black
                 text-[#F4EEDB]
             "
         >
