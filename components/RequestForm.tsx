@@ -7,7 +7,7 @@ import {
 } from 'react'
 import { useFormStatus } from 'react-dom'
 
-import { createRequest } from '../app//[locale]/arte-e-joalheria/solicitacao/actions'
+import { createRequest } from '../app/[locale]/orcamento/actions'
 
 import type { RequestFormState } from '@/types/database'
 

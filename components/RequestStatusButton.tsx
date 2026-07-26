@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 
 import type { RequestStatus } from '@/types/database'
 
-import { updateRequestStatus } from '@/app/[locale]/arte-e-joalheria/solicitacao/actions'
+import { updateRequestStatus } from '@/app/[locale]/orcamento/actions'
 
 type Props = {
     requestId: string

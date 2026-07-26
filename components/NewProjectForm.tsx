@@ -21,6 +21,7 @@ const PROJECT_CATEGORIES = [
     'art_jewelry',
     'events',
     'audiovisual',
+    'careers'
 ] as const
 
 type ProjectCategory =
@@ -362,6 +363,7 @@ export default function NewProjectForm({
                     description_en:
                         form.description_en.trim() ||
                         null,
+                    client: form.client.trim() || null,
                     is_featured:
                         form.is_featured,
                 })
