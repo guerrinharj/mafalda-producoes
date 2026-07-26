@@ -146,6 +146,7 @@ export default async function RequestPage({
                             pt-10
                                 text-5xl
                                 leading-none
+                                font-franklin
                                 md:text-7xl
                             "
                         >
@@ -193,6 +194,7 @@ export default async function RequestPage({
                                         text-3xl
                                         leading-none
                                         md:text-5xl
+                                        font-franklin
                                     "
                                 >
                                     {content.requestsTitle}

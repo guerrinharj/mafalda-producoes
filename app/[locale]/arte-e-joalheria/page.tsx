@@ -33,30 +33,6 @@ export default async function ArteEJoalheriaPage({
 
     return (
         <PageContainer>
-            <div
-                className="
-                    flex
-                    justify-end
-                    absolute
-                "
-            >
-                <Link
-                    href={`/${locale}/arte-e-joalheria/solicitacao`}
-                    className="
-                        border-b
-                        border-current
-                        pb-1
-                        text-sm
-                        uppercase
-                        tracking-wide
-                        transition-opacity
-                        hover:opacity-50
-                    "
-                >
-                    {requestLabel}
-                </Link>
-            </div>
-
             <ProjectCategoryPage
                 locale={locale}
                 category="art_jewelry"
