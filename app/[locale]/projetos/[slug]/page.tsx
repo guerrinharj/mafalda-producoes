@@ -24,6 +24,7 @@ type Project = {
     name_pt: string
     name_en: string | null
     slug: string
+    client: string
     category: string
     year: string | null
     media: string[] | null
@@ -84,6 +85,8 @@ export default async function ProjectPage({
     if (error || !project) {
         notFound()
     }
+
+    console.log(project)
 
     const {
         data: { user },
@@ -232,7 +235,7 @@ export default async function ProjectPage({
 
                         {project.year && (
                             <span>
-                                {project.year}
+                                {project.year} / {project.client}
                             </span>
                         )}
                     </div>

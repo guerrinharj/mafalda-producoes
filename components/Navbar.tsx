@@ -160,14 +160,6 @@ export default function Navbar({
                         {dict.nav.artAndJewelry}
                     </Link>
 
-                    <Link
-                        href={`/${locale}/carreiras`}
-                        className={getLinkClass(
-                            `/${locale}/carreiras`
-                        )}
-                    >
-                        {dict.nav.careers}
-                    </Link>
 
                     <Link
                         href={`/${locale}/orcamento`}
