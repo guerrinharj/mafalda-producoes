@@ -12,7 +12,7 @@ export default function PageContainer({
             className={`
                 min-h-screen
                 w-full
-                px-8
+                mx-8
                 pb-32
                 ${className}
             `}
