@@ -105,8 +105,9 @@ export default function ProjectGrid({
                     fixed
                     inset-0
                     z-0
+                    h-screen
+                    w-screen
                     overflow-hidden
-                    bg-black
                 "
             >
                 {activeBackground && (
@@ -114,12 +115,13 @@ export default function ProjectGrid({
                         className="
                             absolute
                             inset-0
+                            h-full
+                            w-full
                             bg-cover
                             bg-center
                             bg-no-repeat
-                            transition-all
+                            transition-opacity
                             duration-700
-                            ease-out
                         "
                         style={{
                             backgroundImage: `url(${activeBackground})`,
