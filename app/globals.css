@@ -58,3 +58,147 @@
     animation: carousel-fade-out 400ms ease-out
         forwards;
 }
+
+
+
+/* Cursor customizado */
+
+@media (pointer: fine) {
+    html,
+    body,
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    label,
+    [role='button'] {
+        cursor: none !important;
+    }
+}
+
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 9999px;
+    background-color: #F4EEDB;
+
+    opacity: 0;
+
+    pointer-events: none;
+    z-index: 99999;
+
+    mix-blend-mode: difference;
+
+    will-change:
+        transform,
+        width,
+        height,
+        opacity;
+
+    transition:
+        width 250ms ease,
+        height 250ms ease,
+        opacity 200ms ease;
+}
+
+.custom-cursor--visible {
+    opacity: 1;
+}
+
+.custom-cursor--hovering {
+    width: 64px;
+    height: 64px;
+}
+
+.custom-cursor--pressed {
+    width: 30px;
+    height: 30px;
+}
+
+/*
+    Marca criada no clique.
+    Ela também usa difference, então inverte
+    tudo que estiver atrás dela.
+*/
+
+.custom-cursor-click {
+    position: fixed;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 9999px;
+    background-color: #F4EEDB;
+
+    pointer-events: none;
+    z-index: 99998;
+
+    mix-blend-mode: difference;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0);
+
+    animation:
+        custom-cursor-click-animation
+        900ms cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        forwards;
+}
+
+@keyframes custom-cursor-click-animation {
+    0% {
+        opacity: 0.9;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0);
+    }
+
+    45% {
+        opacity: 0.75;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(4.5);
+    }
+}
+
+/* Mantém o cursor normal em celular e tablet */
+
+@media (pointer: fine) {
+    *,
+    *::before,
+    *::after {
+        cursor: none !important;
+    }
+}
+
+/* Acessibilidade */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+    .custom-cursor {
+        transition: none;
+    }
+
+    .custom-cursor-click {
+        animation-duration: 1ms;
+    }
+}
