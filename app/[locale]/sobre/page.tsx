@@ -32,7 +32,7 @@ export default async function AboutPage({
             <main className="relative min-h-screen overflow-hidden">
                 {/* Background */}
                 <Image
-                    src="./images/mafalda.png"
+                    src="images/mafaldahi.png"
                     alt="Mafalda"
                     fill
                     priority
