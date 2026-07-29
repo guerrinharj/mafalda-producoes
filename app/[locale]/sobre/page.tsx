@@ -61,21 +61,6 @@ export default async function AboutPage({
                     "
                 >
                     <div className="w-full max-w-3xl text-[#F4EEDB]">
-                        <h1
-                            className="
-                                mb-8
-                                font-franklin
-                                text-5xl
-                                uppercase
-                                tracking-tight
-                                md:text-7xl
-                            "
-                        >
-                            {isPortuguese
-                                ? 'Sobre'
-                                : 'About'}
-                        </h1>
-
                         <div className="space-y-5 text-sm leading-relaxed md:text-base">
                             {isPortuguese ? (
                                 <>
