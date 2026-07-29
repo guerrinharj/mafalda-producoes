@@ -207,21 +207,18 @@ export default function ProjectGrid({
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        toggleProject(
-                                            project.id
-                                        )
+                                        toggleProject(project.id)
                                     }
-                                    aria-expanded={
-                                        isProjectOpen
-                                    }
-                                    aria-controls={
-                                        descriptionId
-                                    }
+                                    aria-expanded={isProjectOpen}
+                                    aria-controls={descriptionId}
                                     className="
                                         group
                                         flex
                                         w-full
+                                        min-w-0
+                                        max-w-full
                                         items-center
+                                        overflow-hidden
                                         py-3
                                         text-left
                                         md:py-4
@@ -243,57 +240,74 @@ export default function ProjectGrid({
 
                                     <div
                                         className="
-                                            flex
                                             min-w-0
+                                            max-w-full
                                             flex-1
-                                            items-center
                                             overflow-hidden
                                         "
                                     >
-                                        <span
-                                            aria-hidden="true"
-                                            className={`
-                                                inline-block
+                                        <div
+                                            className="
+                                                flex
+                                                min-w-0
+                                                max-w-full
+                                                items-center
                                                 overflow-hidden
-                                                whitespace-nowrap
-                                                text-2xl
-                                                transition-all
-                                                duration-500
-                                                ease-out
-
-                                                ${
-                                                    isProjectOpen
-                                                        ? 'mr-4 max-w-16 translate-x-0 rotate-90 text-4xl opacity-100'
-                                                        : 'max-w-0 -translate-x-6 opacity-0 group-hover:mr-4 group-hover:max-w-16 group-hover:translate-x-0 group-hover:text-4xl group-hover:opacity-100 group-focus-visible:mr-4 group-focus-visible:max-w-16 group-focus-visible:translate-x-0 group-focus-visible:text-4xl group-focus-visible:opacity-100'
-                                                }
-                                            `}
+                                            "
                                         >
-                                            →
-                                        </span>
+                                            <span
+                                                aria-hidden="true"
+                                                className={`
+                                                    inline-block
+                                                    overflow-hidden
+                                                    whitespace-nowrap
+                                                    text-2xl
+                                                    transition-all
+                                                    duration-500
+                                                    ease-out
 
-                                        <h2
-                                            className={`
-                                                truncate
-                                                font-franklin
-                                                text-[clamp(2.5rem,7vw,8rem)]
-                                                leading-[0.9]
-                                                tracking-[-0.06em]
-                                                transition-[transform,opacity]
-                                                duration-500
-                                                ease-out
-                                                group-hover:translate-x-2
-                                                group-focus-visible:translate-x-2
+                                                    ${
+                                                        isProjectOpen
+                                                            ? 'mr-4 max-w-16 translate-x-0 rotate-90 text-4xl opacity-100'
+                                                            : 'max-w-0 -translate-x-6 opacity-0 group-hover:mr-4 group-hover:max-w-16 group-hover:translate-x-0 group-hover:text-4xl group-hover:opacity-100 group-focus-visible:mr-4 group-focus-visible:max-w-16 group-focus-visible:translate-x-0 group-focus-visible:text-4xl group-focus-visible:opacity-100'
+                                                    }
+                                                `}
+                                            >
+                                                →
+                                            </span>
 
-                                                ${
-                                                    activeProjectId &&
-                                                    !isProjectOpen
-                                                        ? 'opacity-45'
-                                                        : 'opacity-100'
-                                                }
-                                            `}
-                                        >
-                                            {projectName}
-                                        </h2>
+                                                <h2
+                                                    className={`
+                                                        min-w-0
+                                                        max-w-full
+                                                        flex-1
+                                                        overflow-hidden
+                                                        break-words
+                                                        [overflow-wrap:anywhere]
+                                                        font-franklin
+                                                        text-[clamp(1.75rem,8vw,3rem)]
+                                                        leading-[0.95]
+                                                        tracking-[-0.05em]
+                                                        transition-[transform,opacity]
+                                                        duration-500
+                                                        ease-out
+                                                        md:text-[clamp(2.5rem,7vw,8rem)]
+                                                        md:leading-[0.9]
+                                                        md:tracking-[-0.06em]
+                                                        md:group-hover:translate-x-2
+                                                        md:group-focus-visible:translate-x-2
+
+                                                        ${
+                                                            activeProjectId &&
+                                                            !isProjectOpen
+                                                                ? 'opacity-45'
+                                                                : 'opacity-100'
+                                                        }
+                                                    `}
+                                                >
+                                                    {projectName}
+                                                </h2>
+                                        </div>
                                     </div>
 
                                     <span
