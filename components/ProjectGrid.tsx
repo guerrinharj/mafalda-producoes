@@ -229,17 +229,16 @@ export default function ProjectGrid({
                                 >
                                     <span
                                         className="
-                                            mr-4
+                                            hidden
                                             w-8
                                             shrink-0
                                             text-xs
                                             opacity-60
+                                            md:block
                                             md:mr-8
                                         "
                                     >
-                                        {String(
-                                            index + 1
-                                        ).padStart(2, '0')}
+                                        {String(index + 1).padStart(2, '0')}
                                     </span>
 
                                     <div
