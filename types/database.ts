@@ -22,6 +22,7 @@ export type Project = {
     category: ProjectCategory
     client: string | null
     year: string | null
+    link: string | null
     media: string[]
     description_pt: string | null
     description_en: string | null
@@ -33,6 +34,7 @@ export type ProjectInsert = {
     name_pt: string
     name_en?: string | null
     slug: string
+    link: string | null
     category: ProjectCategory
     year?: string | null
     media?: string[]

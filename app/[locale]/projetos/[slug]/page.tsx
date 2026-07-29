@@ -27,6 +27,7 @@ type Project = {
     slug: string
     client: string | null
     category: string
+    link: string | null
     year: string | null
     media: string[] | null
     description_pt: string | null
@@ -76,6 +77,7 @@ export default async function ProjectPage({
             client,
             category,
             year,
+            link,
             media,
             description_pt,
             description_en,
@@ -259,20 +261,50 @@ export default async function ProjectPage({
                                     md:grid-cols-[minmax(0,1fr)_auto]
                                 "
                             >
-                                {description && (
-                                    <p
-                                        className="
-                                            max-w-3xl
-                                            whitespace-pre-line
-                                            font-mono
-                                            text-sm
-                                            leading-relaxed
-                                            md:text-base
-                                        "
-                                    >
-                                        {description}
-                                    </p>
-                                )}
+                                <div className="max-w-3xl space-y-4">
+                                    {project.link && (
+                                        <a
+                                            href={project.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="
+                                                inline-flex
+                                                items-center
+                                                gap-2
+                                                font-mono
+                                                text-xs
+                                                uppercase
+                                                tracking-[0.12em]
+                                                opacity-70
+                                                transition-opacity
+                                                duration-300
+                                                hover:opacity-100
+                                            "
+                                        >
+                                            <span aria-hidden="true">↗</span>
+
+                                            <span>
+                                                {locale === 'pt'
+                                                    ? 'Visitar projeto'
+                                                    : 'Visit project'}
+                                            </span>
+                                        </a>
+                                    )}
+
+                                    {description && (
+                                        <p
+                                            className="
+                                                whitespace-pre-line
+                                                font-mono
+                                                text-sm
+                                                leading-relaxed
+                                                md:text-base
+                                            "
+                                        >
+                                            {description}
+                                        </p>
+                                    )}
+                                </div>
 
                                 <div
                                     className="
