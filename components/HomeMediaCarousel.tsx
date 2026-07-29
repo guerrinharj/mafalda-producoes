@@ -129,7 +129,6 @@ export default function HomeMediaCarousel({
                     scale-110
                     object-cover
                     opacity-70
-                    blur-3xl
                 "
             />
 
