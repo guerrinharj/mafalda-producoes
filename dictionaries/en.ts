@@ -23,7 +23,7 @@ export const dictionary = {
     },
 
     home: {
-        title: 'Mafalda Artistic Productions',
+        title: 'MAFALDA LTDA.',
     },
 
     pages: {

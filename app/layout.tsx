@@ -35,6 +35,7 @@ export default function RootLayout({
             <body
                 className="
                     flex
+                    items-center
                     min-h-screen
                     flex-col
                     bg-black

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
 import PageContainer from '@/components/PageContainer'
+import PageTransition from '@/components/PageTransition'
 import EditProjectButton from '@/components/EditProjectButton'
 import DeleteProjectButton from '@/components/DeleteProjectButton'
 
@@ -24,7 +25,7 @@ type Project = {
     name_pt: string
     name_en: string | null
     slug: string
-    client: string
+    client: string | null
     category: string
     year: string | null
     media: string[] | null
@@ -72,6 +73,7 @@ export default async function ProjectPage({
             name_pt,
             name_en,
             slug,
+            client,
             category,
             year,
             media,
@@ -85,8 +87,6 @@ export default async function ProjectPage({
     if (error || !project) {
         notFound()
     }
-
-    console.log(project)
 
     const {
         data: { user },
@@ -106,171 +106,299 @@ export default async function ProjectPage({
 
     const media = project.media ?? []
 
+    const backgroundImage =
+        media.find(
+            (mediaUrl) => !isVideo(mediaUrl)
+        ) ?? null
+
     return (
         <PageContainer>
-            <main
-                className="
-                    min-h-screen
-                    px-6
-                    pb-24
-                    pt-20
-                    md:px-12
-                "
-            >
-
-            {media.length > 0 && (
-                    <section
+            <PageTransition>
+                <main
+                    className="
+                        relative
+                        min-h-screen
+                        overflow-hidden
+                        px-4
+                        pb-24
+                        pt-24
+                        md:px-8
+                        md:pt-28
+                    "
+                >
+                    {/* Background fixo */}
+                    <div
+                        aria-hidden="true"
                         className="
+                            pointer-events-none
+                            fixed
+                            inset-0
+                            z-0
+                            overflow-hidden
+                        "
+                    >
+                        {backgroundImage && (
+                            <div
+                                className="
+                                    absolute
+                                    inset-0
+                                    bg-cover
+                                    bg-center
+                                    bg-no-repeat
+                                "
+                                style={{
+                                    backgroundImage: `url(${backgroundImage})`,
+                                }}
+                            />
+                        )}
+
+                        <div
+                            className={`
+                                absolute
+                                inset-0
+                                bg-black
+
+                                ${
+                                    backgroundImage
+                                        ? 'opacity-55'
+                                        : 'opacity-100'
+                                }
+                            `}
+                        />
+                    </div>
+
+                    {/* Conteúdo */}
+                    <div
+                        className="
+                            relative
+                            z-10
                             mx-auto
                             flex
+                            min-h-[calc(100vh-6rem)]
                             w-full
-                            max-w-6xl
+                            max-w-7xl
                             flex-col
-                            gap-8
                         "
                     >
-                        {media.map(
-                            (mediaUrl, index) => (
-                                <div
-                                    key={`${mediaUrl}-${index}`}
+                        <header
+                            className="
+                                flex
+                                flex-1
+                                flex-col
+                                justify-end
+                                pb-12
+                                md:pb-16
+                            "
+                        >
+                            <div
+                                className="
+                                    flex
+                                    min-w-0
+                                    items-start
+                                    justify-between
+                                    gap-4
+                                "
+                            >
+                                <h1
                                     className="
-                                        w-full
-                                        overflow-hidden
+                                        min-w-0
+                                        max-w-full
+                                        flex-1
+                                        break-words
+                                        [overflow-wrap:anywhere]
+                                        font-franklin
+                                        text-[clamp(2.75rem,11vw,9rem)]
+                                        leading-[0.86]
+                                        tracking-[-0.06em]
                                     "
                                 >
-                                    {isVideo(
-                                        mediaUrl
-                                    ) ? (
-                                        <video
-                                            src={
-                                                mediaUrl
+                                    {projectName}
+                                </h1>
+
+                                {user && (
+                                    <div
+                                        className="
+                                            flex
+                                            shrink-0
+                                            flex-col
+                                            items-end
+                                            gap-2
+                                            md:flex-row
+                                        "
+                                    >
+                                        <EditProjectButton
+                                            locale={
+                                                locale as Locale
                                             }
-                                            controls
-                                            playsInline
-                                            preload="metadata"
-                                            className="
-                                                h-auto
-                                                w-full
-                                                object-cover
-                                            "
-                                        />
-                                    ) : (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
-                                            src={
-                                                mediaUrl
+                                            slug={
+                                                project.slug
                                             }
-                                            alt={`${projectName} ${index + 1}`}
-                                            className="
-                                                h-auto
-                                                w-full
-                                                object-cover
-                                            "
                                         />
+
+                                        <DeleteProjectButton
+                                            locale={
+                                                locale as Locale
+                                            }
+                                            id={project.id}
+                                            slug={
+                                                project.slug
+                                            }
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div
+                                className="
+                                    mt-8
+                                    grid
+                                    gap-8
+                                    border-t
+                                    border-current/30
+                                    pt-5
+                                    md:grid-cols-[minmax(0,1fr)_auto]
+                                "
+                            >
+                                {description && (
+                                    <p
+                                        className="
+                                            max-w-3xl
+                                            whitespace-pre-line
+                                            font-mono
+                                            text-sm
+                                            leading-relaxed
+                                            md:text-base
+                                        "
+                                    >
+                                        {description}
+                                    </p>
+                                )}
+
+                                <div
+                                    className="
+                                        flex
+                                        items-start
+                                        gap-5
+                                        font-mono
+                                        text-xs
+                                        uppercase
+                                        tracking-[0.12em]
+                                    "
+                                >
+                                    {project.client && (
+                                        <span>
+                                            {project.client}
+                                        </span>
+                                    )}
+
+                                    {project.year && (
+                                        <span>
+                                            {project.year}
+                                        </span>
                                     )}
                                 </div>
-                            )
-                        )}
-                    </section>
-                )}
+                            </div>
+                        </header>
 
-                <header
-                    className="
-                        mx-auto
-                        mb-16
-                        mt-8
-                        flex
-                        w-full
-                        max-w-6xl
-                        flex-col
-                        gap-6
-                    "
-                >
-                    <div
-                        className="
-                            flex
-                            items-start
-                            justify-between
-                            gap-6
-                        "
-                    >
-                        <h1
+                        <Link
+                            href={`/${locale}/`}
                             className="
-                                text-4xl
-                                font-franklin
-                                leading-none
-                                md:text-6xl
+                                inline-flex
+                                w-fit
+                                items-center
+                                gap-3
+                                py-4
+                                font-mono
+                                text-xs
+                                uppercase
+                                tracking-[0.12em]
+                                transition-opacity
+                                duration-300
+                                hover:opacity-50
                             "
                         >
-                            {projectName}
-                        </h1>
-
-                        {user && (
-                            <EditProjectButton
-                                locale={
-                                    locale as Locale
-                                }
-                                slug={project.slug}
-                            />
-                        )}
-
-                        {user && (
-                            <DeleteProjectButton
-                                locale={locale as Locale}
-                                id={project.id}
-                                slug={project.slug}
-                            />
-                            )}
-                    </div>
-
-                    <div
-                        className="
-                            flex
-                            flex-wrap
-                            gap-x-8
-                            gap-y-2
-                            text-sm
-                        "
-                    >
-
-                        {project.year && (
-                            <span>
-                                {project.year} / {project.client}
+                            <span aria-hidden="true">
+                                ←
                             </span>
-                        )}
+
+                            <span>
+                                {locale === 'pt'
+                                    ? '←'
+                                    : '←'}
+                            </span>
+                        </Link>
                     </div>
 
-                    {description && (
-                        <p
+                    {/* Galeria adicional */}
+                    {media.length > 1 && (
+                        <section
                             className="
-                                max-w-3xl
-                                whitespace-pre-line
-                                leading-relaxed
+                                relative
+                                z-10
+                                mx-auto
+                                mt-24
+                                flex
+                                w-full
+                                max-w-7xl
+                                flex-col
+                                gap-8
                             "
                         >
-                            {description}
-                        </p>
+                            {media
+                                .filter(
+                                    (mediaUrl) =>
+                                        mediaUrl !==
+                                        backgroundImage
+                                )
+                                .map(
+                                    (
+                                        mediaUrl,
+                                        index
+                                    ) => (
+                                        <div
+                                            key={`${mediaUrl}-${index}`}
+                                            className="
+                                                w-full
+                                                overflow-hidden
+                                            "
+                                        >
+                                            {isVideo(
+                                                mediaUrl
+                                            ) ? (
+                                                <video
+                                                    src={
+                                                        mediaUrl
+                                                    }
+                                                    controls
+                                                    playsInline
+                                                    preload="metadata"
+                                                    className="
+                                                        h-auto
+                                                        w-full
+                                                        object-cover
+                                                    "
+                                                />
+                                            ) : (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img
+                                                    src={
+                                                        mediaUrl
+                                                    }
+                                                    alt={`${projectName} ${index + 2}`}
+                                                    className="
+                                                        h-auto
+                                                        w-full
+                                                        object-cover
+                                                    "
+                                                />
+                                            )}
+                                        </div>
+                                    )
+                                )}
+                        </section>
                     )}
-                </header>
-
-                
-
-                <Link
-                    href={`/${locale}/projetos`}
-                    className="
-                        mt-16
-                        inline-block
-                        text-sm
-                        uppercase
-                        transition-opacity
-                        hover:opacity-50
-                    "
-                >
-                    {locale === 'pt'
-                        ? ''
-                        : ''}
-                </Link>
-            </main>
+                </main>
+            </PageTransition>
         </PageContainer>
     )
 }
