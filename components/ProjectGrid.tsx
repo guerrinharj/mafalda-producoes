@@ -373,23 +373,49 @@ export default function ProjectGrid({
                                                 }
                                             `}
                                         >
-                                            <p
-                                                className="
-                                                    max-w-3xl
-                                                    whitespace-pre-line
-                                                    font-mono
-                                                    text-sm
-                                                    leading-relaxed
-                                                    md:text-base
-                                                    md:leading-relaxed
-                                                "
-                                            >
-                                                {projectDescription ||
-                                                    (locale ===
-                                                    'pt'
-                                                        ? 'Este projeto ainda não possui descrição.'
-                                                        : 'This project does not have a description yet.')}
-                                            </p>
+                                            <div className="space-y-4">
+                                                {project.link && (
+                                                    <a
+                                                        href={project.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="
+                                                            inline-flex
+                                                            items-center
+                                                            gap-2
+                                                            font-mono
+                                                            text-xs
+                                                            uppercase
+                                                            tracking-[0.12em]
+                                                            opacity-70
+                                                            transition-opacity
+                                                            hover:opacity-100
+                                                        "
+                                                    >
+                                                        ↗
+                                                        {locale === 'pt'
+                                                            ? 'Visitar projeto'
+                                                            : 'Visit project'}
+                                                    </a>
+                                                )}
+
+                                                <p
+                                                    className="
+                                                        max-w-3xl
+                                                        whitespace-pre-line
+                                                        font-mono
+                                                        text-sm
+                                                        leading-relaxed
+                                                        md:text-base
+                                                        md:leading-relaxed
+                                                    "
+                                                >
+                                                    {projectDescription ||
+                                                        (locale === 'pt'
+                                                            ? 'Este projeto ainda não possui descrição.'
+                                                            : 'This project does not have a description yet.')}
+                                                </p>
+                                            </div>
 
                                             <div
                                                 className="
@@ -404,19 +430,11 @@ export default function ProjectGrid({
                                                 "
                                             >
                                                 {project.client && (
-                                                    <span>
-                                                        {
-                                                            project.client
-                                                        }
-                                                    </span>
+                                                    <span>{project.client}</span>
                                                 )}
 
                                                 {project.year && (
-                                                    <span>
-                                                        {
-                                                            project.year
-                                                        }
-                                                    </span>
+                                                    <span>{project.year}</span>
                                                 )}
                                             </div>
                                         </div>

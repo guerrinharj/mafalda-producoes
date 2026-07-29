@@ -31,6 +31,7 @@ type FormState = {
     name_pt: string
     name_en: string
     slug: string
+    link: string
     client: string
     category: ProjectCategory
     year: string
@@ -49,6 +50,7 @@ const initialState: FormState = {
     name_en: '',
     slug: '',
     client: '',
+    link: '',
     category: PROJECT_CATEGORIES[0],
     year: '',
     description_pt: '',
@@ -111,6 +113,7 @@ export default function NewProjectForm({
         () => createClient(),
         []
     )
+    
 
     const [form, setForm] =
         useState<FormState>(initialState)
@@ -356,6 +359,7 @@ export default function NewProjectForm({
                     category: form.category,
                     year:
                         form.year.trim() || null,
+                    link: form.link.trim() || null,
                     media: mediaUrls,
                     description_pt:
                         form.description_pt.trim() ||
@@ -500,6 +504,21 @@ export default function NewProjectForm({
                     />
                 </Field>
             </div>
+
+            <div className="space-y-2">
+                <Field label="Link">
+                <label>Link</label>
+
+                <input
+                    type="url"
+                    value={form.link}
+                    onChange={handleInputChange}
+                    placeholder="https://..."
+                    className={inputClassName}
+                />
+                </Field>
+            </div>
+
 
             <Field label="Descrição em português">
                 <textarea

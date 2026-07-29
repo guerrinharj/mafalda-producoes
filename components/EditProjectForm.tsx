@@ -31,6 +31,7 @@ export type EditableProject = {
     client: string
     category: ProjectCategory
     year: string | null
+    link: string | null
     media: string[]
     description_pt: string | null
     description_en: string | null
@@ -49,6 +50,7 @@ type FormState = {
     slug: string
     category: ProjectCategory
     year: string
+    link: string
     description_pt: string
     description_en: string
     is_featured: boolean
@@ -157,6 +159,7 @@ export default function EditProjectForm({
         slug: project.slug,
         client: project.client,
         category: project.category,
+        link: project.link ?? '',
         year: project.year ?? '',
         description_pt:
             project.description_pt ?? '',
@@ -436,6 +439,7 @@ export default function EditProjectForm({
                     category: form.category,
                     year:
                         form.year.trim() || null,
+                    link: form.link.trim() || null,
                     media: finalMediaUrls,
                     description_pt:
                         form.description_pt.trim() ||
@@ -605,6 +609,21 @@ export default function EditProjectForm({
                     />
                 </Field>
             </div>
+
+            <div className="space-y-2">
+                <Field label="Link">
+                <label>Link</label>
+
+                <input
+                    type="url"
+                    value={form.link}
+                    onChange={handleInputChange}
+                    placeholder="https://..."
+                    className={inputClassName}
+                />
+                </Field>
+            </div>
+
 
             <Field label="Descrição em português">
                 <textarea
