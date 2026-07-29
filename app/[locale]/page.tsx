@@ -81,7 +81,6 @@ export default async function HomePage({
                     font-franklin
                     tracking-tight
                     text-[#F4EEDB]
-                    mix-blend-difference
                     md:text-7xl
                 "
             >
