@@ -60,6 +60,7 @@ export default async function HomePage({
     return (
         <main
             className="
+                w-full
                 relative
                 flex
                 min-h-screen

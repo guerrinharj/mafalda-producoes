@@ -93,7 +93,10 @@ export default function HomeMediaCarousel({
             className="
                 pointer-events-none
                 absolute
-                inset-0
+                left-0
+                top-0
+                h-full
+                w-full
                 overflow-hidden
                 bg-black
             "
