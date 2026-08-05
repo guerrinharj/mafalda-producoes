@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import HomeMediaCarousel from '@/components/HomeMediaCarousel'
@@ -60,10 +61,10 @@ export default async function HomePage({
     return (
         <main
             className="
-                w-full
                 relative
                 flex
                 min-h-screen
+                w-full
                 items-center
                 justify-center
                 overflow-hidden
@@ -72,20 +73,64 @@ export default async function HomePage({
         >
             <HomeMediaCarousel media={media} />
 
-            <h1
+            <Link
+                href={`/${locale}/space-invaders`}
+                aria-label={
+                    locale === 'pt'
+                        ? 'Entrar no Space Invaders'
+                        : 'Enter Space Invaders'
+                }
                 className="
+                    group
                     relative
                     z-10
+                    block
                     text-center
-                    text-4xl
-                    font-franklin
-                    tracking-tight
                     text-[#F4EEDB]
-                    md:text-7xl
+                    outline-none
                 "
             >
-                {dict.home.title}
-            </h1>
+                <h1
+                    className="
+                        font-franklin
+                        text-4xl
+                        tracking-tight
+                        transition-all
+                        duration-500
+                        ease-out
+                        group-hover:scale-[1.03]
+                        group-hover:tracking-wider
+                        group-focus-visible:scale-[1.03]
+                        group-focus-visible:tracking-wider
+                        md:text-7xl
+                    "
+                >
+                    {dict.home.title}
+                </h1>
+
+                <span
+                    className="
+                        mt-3
+                        block
+                        font-mono
+                        text-xs
+                        uppercase
+                        tracking-[0.3em]
+                        opacity-0
+                        transition-all
+                        duration-500
+                        group-hover:translate-y-1
+                        group-hover:opacity-100
+                        group-focus-visible:translate-y-1
+                        group-focus-visible:opacity-100
+                        md:text-sm
+                    "
+                >
+                    {locale === 'pt'
+                        ? 'Clique para jogar'
+                        : 'Click to play'}
+                </span>
+            </Link>
         </main>
     )
 }
