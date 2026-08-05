@@ -92,7 +92,6 @@ export default async function HomePage({
             >
                 <h1
                     className="
-                        font-franklin
                         text-4xl
                         tracking-tight
                         transition-all
@@ -103,6 +102,7 @@ export default async function HomePage({
                         group-focus-visible:scale-[1.03]
                         group-focus-visible:tracking-wider
                         md:text-7xl
+                        font-futura-bold
                     "
                 >
                     {dict.home.title}
@@ -127,8 +127,8 @@ export default async function HomePage({
                     "
                 >
                     {locale === 'pt'
-                        ? 'Clique para jogar'
-                        : 'Click to play'}
+                        ? ''
+                        : ''}
                 </span>
             </Link>
         </main>
