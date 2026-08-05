@@ -23,7 +23,7 @@ export const dictionary = {
     },
 
     home: {
-        title: 'MAFALDA',
+        title: 'MAFALDA LTDA.',
     },
 
     pages: {
