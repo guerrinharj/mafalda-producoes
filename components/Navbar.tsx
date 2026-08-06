@@ -133,6 +133,17 @@ export default function Navbar({
                         md:text-sm
                     "
                 >
+
+                    <Link
+                        href={`/${locale}/sobre`}
+                        className={getLinkClass(
+                            `/${locale}/sobre`
+                        )}
+                    >
+                        {dict.nav.about}
+                    </Link>
+
+
                     <Link
                         href={`/${locale}/eventos`}
                         className={getLinkClass(
@@ -151,15 +162,6 @@ export default function Navbar({
                         {dict.nav.audiovisual}
                     </Link>
 
-                    <Link
-                        href={`/${locale}/arte-e-joalheria`}
-                        className={getLinkClass(
-                            `/${locale}/arte-e-joalheria`
-                        )}
-                    >
-                        {dict.nav.artAndJewelry}
-                    </Link>
-
 
                     <Link
                         href={`/${locale}/orcamento`}
@@ -168,15 +170,6 @@ export default function Navbar({
                         )}
                     >
                         {dict.nav.jewel}
-                    </Link>
-
-                    <Link
-                        href={`/${locale}/sobre`}
-                        className={getLinkClass(
-                            `/${locale}/sobre`
-                        )}
-                    >
-                        {dict.nav.about}
                     </Link>
                 </div>
 
