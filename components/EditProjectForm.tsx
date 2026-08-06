@@ -28,7 +28,7 @@ export type EditableProject = {
     name_pt: string
     name_en: string | null
     slug: string
-    client: string
+    client: string | null
     category: ProjectCategory
     year: string | null
     platform: string | null
@@ -159,7 +159,7 @@ export default function EditProjectForm({
         name_pt: project.name_pt,
         name_en: project.name_en ?? '',
         slug: project.slug,
-        client: project.client,
+        client: project.client ?? '',
         category: project.category,
         link: project.link ?? '',
         year: project.year ?? '',
