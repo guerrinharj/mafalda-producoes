@@ -33,7 +33,7 @@ export default async function AboutPage({
             <main className="relative min-h-screen w-full overflow-hidden">
                 <div className="fixed inset-0 -z-20">
                     <Image
-                        src="/images/mafalda.png"
+                        src="/images/mafaldahi.png"
                         alt="Mafalda"
                         fill
                         priority
