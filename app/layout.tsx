@@ -12,7 +12,7 @@ const franklinGothic = localFont({
 })
 
 export const metadata: Metadata = {
-    title: 'Mafalda Produções',
+    title: 'MAFALDA LTDA.',
     description: '',
 }
 
