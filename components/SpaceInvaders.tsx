@@ -1021,69 +1021,6 @@ export default function SpaceInvaders({
         >
             <div
                 className="
-                    mb-5
-                    flex
-                    w-full
-                    items-end
-                    justify-between
-                    gap-4
-                "
-            >
-                <div>
-                    <p
-                        className="
-                            font-mono
-                            text-[10px]
-                            uppercase
-                            tracking-[0.35em]
-                            opacity-60
-                        "
-                    >
-                        Mafalda Produções
-                    </p>
-
-                    <h1
-                        className="
-                            mt-1
-                            font-franklin
-                            text-3xl
-                            uppercase
-                            tracking-tight
-                            md:text-5xl
-                        "
-                    >
-                        Space Invaders
-                    </h1>
-                </div>
-
-                <div
-                    className="
-                        hidden
-                        text-right
-                        font-mono
-                        text-xs
-                        uppercase
-                        tracking-[0.18em]
-                        opacity-60
-                        md:block
-                    "
-                >
-                    <p>
-                        {locale === 'pt'
-                            ? 'Mover: A D ou setas'
-                            : 'Move: A D or arrows'}
-                    </p>
-
-                    <p>
-                        {locale === 'pt'
-                            ? 'Atirar: espaço'
-                            : 'Shoot: space'}
-                    </p>
-                </div>
-            </div>
-
-            <div
-                className="
                     relative
                     w-full
                     overflow-hidden
@@ -1267,6 +1204,46 @@ export default function SpaceInvaders({
                 <span>
                     Level: {level}
                 </span>
+            </div>
+
+            <div
+                className="
+                    mb-5
+                    flex
+                    w-full
+                    items-end
+                    justify-between
+                    gap-4
+                "
+            >
+                <div>
+                    
+                </div>
+
+                <div
+                    className="
+                        hidden
+                        text-right
+                        font-mono
+                        text-xs
+                        uppercase
+                        tracking-[0.18em]
+                        opacity-60
+                        md:block
+                    "
+                >
+                    <p>
+                        {locale === 'pt'
+                            ? 'Mover: A D ou setas'
+                            : 'Move: A D or arrows'}
+                    </p>
+
+                    <p>
+                        {locale === 'pt'
+                            ? 'Atirar: espaço'
+                            : 'Shoot: space'}
+                    </p>
+                </div>
             </div>
         </section>
     )
