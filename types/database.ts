@@ -21,6 +21,7 @@ export type Project = {
     slug: string
     category: ProjectCategory
     client: string | null
+    platform: string | null
     year: string | null
     link: string | null
     media: string[]
