@@ -307,6 +307,21 @@ export default function ProjectGrid({
                                                 >
                                                     {projectName}
                                                 </h2>
+                                                {project.platform && (
+                                                <span
+                                                    className="
+                                                        ml-1
+                                                        shrink-0
+                                                        font-mono
+                                                        text-[10px]
+                                                        uppercase
+                                                        tracking-normal
+                                                        md:text-xl
+                                                    "
+                                                >
+                                                    {project.platform}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 

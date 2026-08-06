@@ -28,9 +28,10 @@ export type EditableProject = {
     name_pt: string
     name_en: string | null
     slug: string
-    client: string
+    client: string | null
     category: ProjectCategory
     year: string | null
+    platform: string | null
     link: string | null
     media: string[]
     description_pt: string | null
@@ -50,6 +51,7 @@ type FormState = {
     slug: string
     category: ProjectCategory
     year: string
+    platform: string
     link: string
     description_pt: string
     description_en: string
@@ -157,10 +159,11 @@ export default function EditProjectForm({
         name_pt: project.name_pt,
         name_en: project.name_en ?? '',
         slug: project.slug,
-        client: project.client,
+        client: project.client ?? '',
         category: project.category,
         link: project.link ?? '',
         year: project.year ?? '',
+        platform: project.platform  ?? '',
         description_pt:
             project.description_pt ?? '',
         description_en:
@@ -439,6 +442,7 @@ export default function EditProjectForm({
                     category: form.category,
                     year:
                         form.year.trim() || null,
+                    platform: form.platform.trim() || null,
                     link: form.link.trim() || null,
                     media: finalMediaUrls,
                     description_pt:
@@ -612,8 +616,6 @@ export default function EditProjectForm({
 
             <div className="space-y-2">
                 <Field label="Link">
-                <label>Link</label>
-
                 <input
                     type="url"
                     value={form.link}
@@ -621,6 +623,17 @@ export default function EditProjectForm({
                     placeholder="https://..."
                     className={inputClassName}
                 />
+                </Field>
+
+                <Field label="Plataforma">
+                    <input
+                        name="platform"
+                        type="text"
+                        value={form.platform}
+                        onChange={handleInputChange}
+                        placeholder="2026"
+                        className={inputClassName}
+                    />
                 </Field>
             </div>
 

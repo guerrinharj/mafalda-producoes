@@ -35,6 +35,7 @@ type FormState = {
     client: string
     category: ProjectCategory
     year: string
+    platform: string
     description_pt: string
     description_en: string
     is_featured: boolean
@@ -51,6 +52,7 @@ const initialState: FormState = {
     slug: '',
     client: '',
     link: '',
+    platform: '',
     category: PROJECT_CATEGORIES[0],
     year: '',
     description_pt: '',
@@ -359,6 +361,7 @@ export default function NewProjectForm({
                     category: form.category,
                     year:
                         form.year.trim() || null,
+                    platform: form.platform.trim() || null,
                     link: form.link.trim() || null,
                     media: mediaUrls,
                     description_pt:
@@ -507,7 +510,6 @@ export default function NewProjectForm({
 
             <div className="space-y-2">
                 <Field label="Link">
-                <label>Link</label>
 
                 <input
                     type="url"
@@ -518,6 +520,17 @@ export default function NewProjectForm({
                 />
                 </Field>
             </div>
+
+            <Field label="Plataforma">
+                <input
+                    name="platform"
+                    type="text"
+                    value={form.platform}
+                    onChange={handleInputChange}
+                    placeholder="HBO"
+                    className={inputClassName}
+                />
+            </Field>
 
 
             <Field label="Descrição em português">
