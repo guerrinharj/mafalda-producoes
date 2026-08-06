@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
 import AddProjectButton from '@/components/AddProjectButton'
 import LogoutButton from '@/components/LogoutButton'
+import SpaceInvaderIcon from '@/components/SpaceInvaderIcon'
 
 import {
     getDictionary,
@@ -170,6 +171,18 @@ export default function Navbar({
                         )}
                     >
                         {dict.nav.jewel}
+                    </Link>
+
+                    <Link
+                        href={`/${locale}/space-invaders`}
+                        className={`
+                            ${getLinkClass(`/${locale}/space-invaders`)}
+                            flex items-center justify-center
+                        `}
+                        aria-label="Space Invaders"
+                        title="Space Invaders"
+                    >
+                        <SpaceInvaderIcon className="h-5 w-5" />
                     </Link>
                 </div>
 
